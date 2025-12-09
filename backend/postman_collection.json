@@ -50,6 +50,16 @@
       "key": "tireId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "fuelId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tripId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -1301,6 +1311,575 @@
         }
       ],
       "description": "Tire management endpoints with full CRUD operations and vehicle associations"
+    },
+    {
+      "name": "Fuels",
+      "item": [
+        {
+          "name": "Create Fuel Record",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data._id) {",
+                  "        pm.collectionVariables.set('fuelId', jsonData.data._id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 150,\n  \"pricePerLitre\": 12.5,\n  \"fuelStationLocation\": \"Station Total, Casablanca\",\n  \"dateOfOperation\": \"2024-02-01\",\n  \"linkedDriver\": \"{{userId}}\",\n  \"linkedVehicle\": \"{{truckId}}\",\n  \"linkedTrip\": null,\n  \"notes\": \"Full tank refill\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels"]
+            },
+            "description": "Create a new fuel record (Admin only). Total cost is calculated automatically."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Fuels",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels"]
+            },
+            "description": "Get all fuel records with optional filters: linkedDriver, linkedVehicle, linkedTrip, startDate, endDate, fuelStationLocation, minCost, maxCost"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fuel by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels/{{fuelId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels", "{{fuelId}}"]
+            },
+            "description": "Get a single fuel record by ID with populated driver, vehicle, and trip information"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fuels by Driver",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels/driver/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels", "driver", "{{userId}}"]
+            },
+            "description": "Get all fuel records for a specific driver"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fuels by Vehicle",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels/vehicle/{{truckId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels", "vehicle", "{{truckId}}"]
+            },
+            "description": "Get all fuel records for a specific vehicle"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fuels by Trip",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels/trip/tripId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels", "trip", "tripId"]
+            },
+            "description": "Get all fuel records for a specific trip"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fuel Statistics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels", "stats"]
+            },
+            "description": "Get fuel statistics including total cost, quantity, avg price, and breakdowns by driver, vehicle, and month (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Fuel Record",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 160,\n  \"pricePerLitre\": 12.7,\n  \"notes\": \"Updated quantity\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels/{{fuelId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels", "{{fuelId}}"]
+            },
+            "description": "Update fuel record information (Admin only). Total cost is recalculated automatically."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Fuel Record",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fuels/{{fuelId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fuels", "{{fuelId}}"]
+            },
+            "description": "Delete a fuel record by ID (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Fuel tracking endpoints with driver, vehicle, and trip associations"
+    },
+    {
+      "name": "Trips",
+      "item": [
+        {
+          "name": "Create Trip",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data._id) {",
+                  "        pm.collectionVariables.set('tripId', jsonData.data._id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignedTruck\": \"{{truckId}}\",\n  \"assignedTrailer\": \"{{trailerId}}\",\n  \"assignedDriver\": \"{{userId}}\",\n  \"startPoint\": \"Casablanca\",\n  \"destinationPoint\": \"Marrakech\",\n  \"departureDate\": \"2024-02-10\",\n  \"expectedArrivalDate\": \"2024-02-11\",\n  \"status\": \"À faire\",\n  \"mileageAtDeparture\": 50000,\n  \"driverRemarks\": \"New trip assignment\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trips",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips"]
+            },
+            "description": "Create a new trip (Admin only). Trip number is auto-generated."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Trips",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips"]
+            },
+            "description": "Get all trips with optional filters: status, assignedDriver, assignedTruck, assignedTrailer, startDate, endDate, startPoint, destinationPoint"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trip by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/{{tripId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "{{tripId}}"]
+            },
+            "description": "Get a single trip by ID with populated driver, truck, and trailer information"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trips by Driver",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/driver/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "driver", "{{userId}}"]
+            },
+            "description": "Get all trips for a specific driver"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trips by Truck",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/truck/{{truckId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "truck", "{{truckId}}"]
+            },
+            "description": "Get all trips for a specific truck"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trips by Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/status/En cours",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "status", "En cours"]
+            },
+            "description": "Get all trips by status. Options: À faire, En cours, Terminé"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trip Statistics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "stats"]
+            },
+            "description": "Get trip statistics including counts by status, driver, truck, and total distance (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Mission Order PDF",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/{{tripId}}/pdf",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "{{tripId}}", "pdf"]
+            },
+            "description": "Generate mission order PDF for a specific trip"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Trip",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mileageAtArrival\": 50240,\n  \"driverRemarks\": \"Trip completed successfully\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/{{tripId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "{{tripId}}"]
+            },
+            "description": "Update trip information (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Trip Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"En cours\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/{{tripId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "{{tripId}}", "status"]
+            },
+            "description": "Update only trip status (Admin only). Options: À faire, En cours, Terminé"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Trip",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trips/{{tripId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trips", "{{tripId}}"]
+            },
+            "description": "Delete a trip by ID (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Trip/Mission management endpoints with auto-generated trip numbers and PDF generation"
     },
     {
       "name": "Health Check",

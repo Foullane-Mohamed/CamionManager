@@ -4,6 +4,8 @@ import User from "./models/User.js";
 import Truck from "./models/Truck.js";
 import Trailer from "./models/Trailer.js";
 import Tire from "./models/Tire.js";
+import Fuel from "./models/Fuel.js";
+import Trip from "./models/Trip.js";
 import connectDB from "./config/db.js";
 
 dotenv.config();
@@ -15,6 +17,8 @@ const seedDatabase = async () => {
     await Truck.deleteMany();
     await Trailer.deleteMany();
     await Tire.deleteMany();
+    await Fuel.deleteMany();
+    await Trip.deleteMany();
 
     const admin = await User.create({
       name: "Admin User",
@@ -51,7 +55,7 @@ const seedDatabase = async () => {
       dateOfBirth: new Date("1990-08-20"),
       accountStatus: "pending",
     });
-    console.log("✅ Users seeded successfully!");
+    console.log(" Users seeded successfully!");
 
     const truck1 = await Truck.create({
       matricule: "123ABC45",
@@ -103,7 +107,7 @@ const seedDatabase = async () => {
       fuelType: "Gasoline",
     });
 
-    console.log("✅ Trucks seeded successfully!");
+    console.log(" Trucks seeded successfully!");
 
     const trailer1 = await Trailer.create({
       matricule: "REM001FR",
@@ -144,7 +148,7 @@ const seedDatabase = async () => {
       status: "Disponible",
       currentMileage: 5000,
     });
-    console.log("✅ Trailers seeded successfully!");
+    console.log(" Trailers seeded successfully!");
 
     const tire1 = await Tire.create({
       serialNumber: "TIRE001",
@@ -233,13 +237,161 @@ const seedDatabase = async () => {
       associatedVehicleType: "Trailer",
       associatedVehicleId: trailer2._id,
     });
+    console.log(" Tires seeded successfully!");
 
-    console.log("✅ Tires seeded successfully!");
-    console.log("✅ Database seeded successfully!");
+    const fuel1 = await Fuel.create({
+      quantity: 150,
+      pricePerLitre: 12.5,
+      totalCost: 1875,
+      fuelStationLocation: "Station Total, Casablanca",
+      dateOfOperation: new Date("2024-01-15"),
+      linkedDriver: chauffeur1._id,
+      linkedVehicle: truck1._id,
+      linkedTrip: null,
+      notes: "Full tank refill",
+    });
+
+    const fuel2 = await Fuel.create({
+      quantity: 200,
+      pricePerLitre: 12.3,
+      totalCost: 2460,
+      fuelStationLocation: "Station Shell, Rabat",
+      dateOfOperation: new Date("2024-01-18"),
+      linkedDriver: chauffeur2._id,
+      linkedVehicle: truck2._id,
+      linkedTrip: null,
+      notes: "Long distance trip preparation",
+    });
+
+    const fuel3 = await Fuel.create({
+      quantity: 100,
+      pricePerLitre: 12.7,
+      totalCost: 1270,
+      fuelStationLocation: "Station Afriquia, Marrakech",
+      dateOfOperation: new Date("2024-01-20"),
+      linkedDriver: chauffeur1._id,
+      linkedVehicle: truck3._id,
+      linkedTrip: null,
+      notes: "Mid-route refueling",
+    });
+
+    const fuel4 = await Fuel.create({
+      quantity: 180,
+      pricePerLitre: 12.6,
+      totalCost: 2268,
+      fuelStationLocation: "Station Petrom, Tangier",
+      dateOfOperation: new Date("2024-01-22"),
+      linkedDriver: chauffeur2._id,
+      linkedVehicle: truck4._id,
+      linkedTrip: null,
+      notes: "Border crossing preparation",
+    });
+
+    const fuel5 = await Fuel.create({
+      quantity: 120,
+      pricePerLitre: 12.4,
+      totalCost: 1488,
+      fuelStationLocation: "Station Total, Agadir",
+      dateOfOperation: new Date("2024-01-25"),
+      linkedDriver: chauffeur1._id,
+      linkedVehicle: truck5._id,
+      linkedTrip: null,
+      notes: "Return trip refueling",
+    });
+
+    const fuel6 = await Fuel.create({
+      quantity: 160,
+      pricePerLitre: 12.8,
+      totalCost: 2048,
+      fuelStationLocation: "Station Shell, Fes",
+      dateOfOperation: new Date("2024-01-28"),
+      linkedDriver: chauffeur2._id,
+      linkedVehicle: truck1._id,
+      linkedTrip: null,
+      notes: "Emergency refill",
+    });
+    console.log(" Fuel records seeded successfully!");
+
+    const trip1 = await Trip.create({
+      tripNumber: "TRIP20241210001",
+      assignedTruck: truck1._id,
+      assignedTrailer: trailer1._id,
+      assignedDriver: chauffeur1._id,
+      startPoint: "Casablanca",
+      destinationPoint: "Marrakech",
+      departureDate: new Date("2024-01-20"),
+      expectedArrivalDate: new Date("2024-01-21"),
+      status: "Terminé",
+      mileageAtDeparture: 45000,
+      mileageAtArrival: 45240,
+      driverRemarks: "Trip completed successfully. No issues.",
+      distance: 240,
+    });
+
+    const trip2 = await Trip.create({
+      tripNumber: "TRIP20241210002",
+      assignedTruck: truck2._id,
+      assignedTrailer: trailer2._id,
+      assignedDriver: chauffeur2._id,
+      startPoint: "Rabat",
+      destinationPoint: "Tangier",
+      departureDate: new Date("2024-01-22"),
+      expectedArrivalDate: new Date("2024-01-23"),
+      status: "En cours",
+      mileageAtDeparture: 32000,
+      driverRemarks: "On route, weather conditions good.",
+    });
+
+    const trip3 = await Trip.create({
+      tripNumber: "TRIP20241210003",
+      assignedTruck: truck3._id,
+      assignedTrailer: null,
+      assignedDriver: chauffeur1._id,
+      startPoint: "Agadir",
+      destinationPoint: "Essaouira",
+      departureDate: new Date("2024-01-25"),
+      expectedArrivalDate: new Date("2024-01-25"),
+      status: "À faire",
+      mileageAtDeparture: 78150,
+      driverRemarks: "",
+    });
+
+    const trip4 = await Trip.create({
+      tripNumber: "TRIP20241210004",
+      assignedTruck: truck4._id,
+      assignedTrailer: trailer3._id,
+      assignedDriver: chauffeur2._id,
+      startPoint: "Fes",
+      destinationPoint: "Meknes",
+      departureDate: new Date("2024-01-28"),
+      expectedArrivalDate: new Date("2024-01-28"),
+      status: "Terminé",
+      mileageAtDeparture: 15000,
+      mileageAtArrival: 15060,
+      driverRemarks: "Short trip, delivered on time.",
+      distance: 60,
+    });
+
+    const trip5 = await Trip.create({
+      tripNumber: "TRIP20241210005",
+      assignedTruck: truck5._id,
+      assignedTrailer: trailer4._id,
+      assignedDriver: chauffeur1._id,
+      startPoint: "Casablanca",
+      destinationPoint: "Oujda",
+      departureDate: new Date("2024-02-01"),
+      expectedArrivalDate: new Date("2024-02-02"),
+      status: "À faire",
+      mileageAtDeparture: 95000,
+      driverRemarks: "Long distance trip scheduled.",
+    });
+
+    console.log(" Trips seeded successfully!");
+    console.log(" Database seeded successfully!");
 
     process.exit();
   } catch (error) {
-    console.error("❌ Error seeding database:", error);
+    console.error(" Error seeding database:", error);
     process.exit(1);
   }
 };
