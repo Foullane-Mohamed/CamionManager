@@ -6,6 +6,8 @@ import Trailer from "./models/Trailer.js";
 import Tire from "./models/Tire.js";
 import Fuel from "./models/Fuel.js";
 import Trip from "./models/Trip.js";
+import MaintenanceRule from "./models/MaintenanceRule.js";
+import Maintenance from "./models/Maintenance.js";
 import connectDB from "./config/db.js";
 
 dotenv.config();
@@ -19,6 +21,8 @@ const seedDatabase = async () => {
     await Tire.deleteMany();
     await Fuel.deleteMany();
     await Trip.deleteMany();
+    await MaintenanceRule.deleteMany();
+    await Maintenance.deleteMany();
 
     const admin = await User.create({
       name: "Admin User",
@@ -385,8 +389,159 @@ const seedDatabase = async () => {
       mileageAtDeparture: 95000,
       driverRemarks: "Long distance trip scheduled.",
     });
-
     console.log(" Trips seeded successfully!");
+
+    // Create Maintenance Rules
+    const oilChangeRule = await MaintenanceRule.create({
+      maintenanceType: "Oil Change",
+      mileageThreshold: 10000,
+      timeThresholdDays: 180,
+      description: "Regular oil change every 10,000 km or 6 months",
+      isActive: true,
+      createdBy: admin._id,
+    });
+
+    const vehicleRevisionRule = await MaintenanceRule.create({
+      maintenanceType: "Vehicle Revision",
+      mileageThreshold: 50000,
+      description: "Complete vehicle revision every 50,000 km",
+      isActive: true,
+      createdBy: admin._id,
+    });
+
+    const tireReplacementRule = await MaintenanceRule.create({
+      maintenanceType: "Tire Replacement",
+      description: "Tire replacement when needed based on inspection",
+      isActive: true,
+      createdBy: admin._id,
+    });
+
+    console.log(" Maintenance Rules seeded successfully!");
+
+    // Create Maintenance Records
+    const maintenance1 = await Maintenance.create({
+      maintenanceType: "Oil Change",
+      linkedVehicle: truck1._id,
+      linkedRule: oilChangeRule._id,
+      maintenanceDate: new Date("2024-01-15"),
+      vehicleMileageAtMaintenance: 75000,
+      nextMaintenanceDueDate: new Date("2024-07-15"),
+      nextMaintenanceDueMileage: 85000,
+      cost: 1200,
+      serviceProvider: "Garage Auto Service",
+      description: "Regular oil change with filter replacement",
+      partsReplaced: [
+        { partName: "Engine Oil", quantity: 8, unitPrice: 100 },
+        { partName: "Oil Filter", quantity: 1, unitPrice: 150 },
+      ],
+      isAlertTriggered: false,
+      alertType: "Manual",
+      status: "Completed",
+      performedBy: admin._id,
+      remarks: "Oil quality good, no leaks detected",
+    });
+
+    const maintenance2 = await Maintenance.create({
+      maintenanceType: "Tire Replacement",
+      linkedVehicle: truck2._id,
+      linkedRule: tireReplacementRule._id,
+      maintenanceDate: new Date("2024-02-10"),
+      vehicleMileageAtMaintenance: 120000,
+      cost: 8000,
+      serviceProvider: "Pneumatique Expert",
+      description: "Front tire replacement due to wear",
+      partsReplaced: [{ partName: "Front Tire", quantity: 2, unitPrice: 3500 }],
+      isAlertTriggered: false,
+      alertType: "Manual",
+      status: "Completed",
+      performedBy: admin._id,
+      remarks: "Replaced front tires, rear tires still good",
+    });
+
+    const maintenance3 = await Maintenance.create({
+      maintenanceType: "Vehicle Revision",
+      linkedVehicle: truck3._id,
+      linkedRule: vehicleRevisionRule._id,
+      maintenanceDate: new Date("2024-03-05"),
+      vehicleMileageAtMaintenance: 150000,
+      nextMaintenanceDueMileage: 200000,
+      cost: 5500,
+      serviceProvider: "Centre Technique Auto",
+      description: "Complete vehicle revision at 150,000 km",
+      partsReplaced: [
+        { partName: "Air Filter", quantity: 1, unitPrice: 250 },
+        { partName: "Brake Pads", quantity: 4, unitPrice: 600 },
+        { partName: "Spark Plugs", quantity: 6, unitPrice: 150 },
+      ],
+      isAlertTriggered: true,
+      alertType: "Mileage",
+      status: "Completed",
+      performedBy: admin._id,
+      remarks: "All systems checked and functioning well",
+    });
+
+    const maintenance4 = await Maintenance.create({
+      maintenanceType: "Oil Change",
+      linkedVehicle: truck4._id,
+      linkedRule: oilChangeRule._id,
+      maintenanceDate: new Date("2024-04-20"),
+      vehicleMileageAtMaintenance: 90000,
+      nextMaintenanceDueDate: new Date("2024-10-20"),
+      nextMaintenanceDueMileage: 100000,
+      cost: 1350,
+      serviceProvider: "Garage Auto Service",
+      description: "Oil change and filter replacement",
+      partsReplaced: [
+        { partName: "Synthetic Oil", quantity: 10, unitPrice: 120 },
+        { partName: "Oil Filter", quantity: 1, unitPrice: 150 },
+      ],
+      isAlertTriggered: true,
+      alertType: "Both",
+      status: "Completed",
+      performedBy: admin._id,
+    });
+
+    const maintenance5 = await Maintenance.create({
+      maintenanceType: "Other",
+      linkedVehicle: truck5._id,
+      maintenanceDate: new Date("2024-05-10"),
+      vehicleMileageAtMaintenance: 95000,
+      cost: 2500,
+      serviceProvider: "Electricien Auto Pro",
+      description: "Electrical system repair - alternator replacement",
+      partsReplaced: [
+        { partName: "Alternator", quantity: 1, unitPrice: 2000 },
+        { partName: "Battery Cable", quantity: 2, unitPrice: 150 },
+      ],
+      isAlertTriggered: false,
+      alertType: "Manual",
+      status: "Completed",
+      performedBy: admin._id,
+      remarks: "Emergency repair - alternator failed during trip",
+    });
+
+    const maintenance6 = await Maintenance.create({
+      maintenanceType: "Oil Change",
+      linkedVehicle: truck1._id,
+      linkedRule: oilChangeRule._id,
+      maintenanceDate: new Date("2024-06-01"),
+      vehicleMileageAtMaintenance: 85200,
+      nextMaintenanceDueDate: new Date("2024-12-01"),
+      nextMaintenanceDueMileage: 95200,
+      cost: 1250,
+      serviceProvider: "Quick Service Auto",
+      description: "Scheduled oil change",
+      partsReplaced: [
+        { partName: "Engine Oil", quantity: 8, unitPrice: 105 },
+        { partName: "Oil Filter", quantity: 1, unitPrice: 160 },
+      ],
+      isAlertTriggered: true,
+      alertType: "Mileage",
+      status: "Completed",
+      performedBy: admin._id,
+    });
+
+    console.log(" Maintenance Records seeded successfully!");
     console.log(" Database seeded successfully!");
 
     process.exit();

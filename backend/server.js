@@ -9,6 +9,7 @@ import trailerRoutes from "./routes/trailerRoutes.js";
 import tireRoutes from "./routes/tireRoutes.js";
 import fuelRoutes from "./routes/fuelRoutes.js";
 import tripRoutes from "./routes/tripRoutes.js";
+import maintenanceRoutes from "./routes/maintenanceRoutes.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/api/trailers", trailerRoutes);
 app.use("/api/tires", tireRoutes);
 app.use("/api/fuels", fuelRoutes);
 app.use("/api/trips", tripRoutes);
+app.use("/api/maintenances", maintenanceRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Server is running" });

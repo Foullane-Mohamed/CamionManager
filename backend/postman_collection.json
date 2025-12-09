@@ -60,6 +60,16 @@
       "key": "tripId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "maintenanceRuleId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "maintenanceId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -85,6 +95,9 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -124,6 +137,9 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -163,6 +179,9 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -1882,8 +1901,336 @@
       "description": "Trip/Mission management endpoints with auto-generated trip numbers and PDF generation"
     },
     {
+      "name": "Maintenance",
+      "item": [
+        {
+          "name": "Maintenance Rules",
+          "item": [
+            {
+              "name": "Create Maintenance Rule",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    pm.collectionVariables.set('maintenanceRuleId', response.data._id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maintenanceType\": \"Oil Change\",\n  \"mileageThreshold\": 10000,\n  \"timeThresholdDays\": 180,\n  \"description\": \"Regular oil change every 10,000 km or 6 months\",\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/rules",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "rules"]
+                },
+                "description": "Create a new maintenance rule (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Maintenance Rules",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/rules",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "rules"]
+                },
+                "description": "Get all maintenance rules with optional filtering (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Maintenance Rule by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/rules/{{maintenanceRuleId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "rules",
+                    "{{maintenanceRuleId}}"
+                  ]
+                },
+                "description": "Get a single maintenance rule by ID (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Maintenance Rule",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"mileageThreshold\": 12000,\n  \"timeThresholdDays\": 200,\n  \"description\": \"Updated oil change rule\",\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/rules/{{maintenanceRuleId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "rules",
+                    "{{maintenanceRuleId}}"
+                  ]
+                },
+                "description": "Update a maintenance rule (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Maintenance Rule",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/rules/{{maintenanceRuleId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "rules",
+                    "{{maintenanceRuleId}}"
+                  ]
+                },
+                "description": "Delete a maintenance rule (Admin only)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Maintenance Records",
+          "item": [
+            {
+              "name": "Create Maintenance Record",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    pm.collectionVariables.set('maintenanceId', response.data._id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maintenanceType\": \"Oil Change\",\n  \"linkedVehicle\": \"{{truckId}}\",\n  \"linkedRule\": \"{{maintenanceRuleId}}\",\n  \"maintenanceDate\": \"2024-06-15\",\n  \"vehicleMileageAtMaintenance\": 85000,\n  \"nextMaintenanceDueDate\": \"2024-12-15\",\n  \"nextMaintenanceDueMileage\": 95000,\n  \"cost\": 1200,\n  \"serviceProvider\": \"Garage Auto Service\",\n  \"description\": \"Regular oil change with filter replacement\",\n  \"partsReplaced\": [\n    {\n      \"partName\": \"Engine Oil\",\n      \"quantity\": 8,\n      \"unitPrice\": 100\n    },\n    {\n      \"partName\": \"Oil Filter\",\n      \"quantity\": 1,\n      \"unitPrice\": 150\n    }\n  ],\n  \"status\": \"Completed\",\n  \"remarks\": \"Oil quality good, no leaks detected\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances"]
+                },
+                "description": "Create a new maintenance record (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Maintenance Records",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances"]
+                },
+                "description": "Get all maintenance records with optional filtering (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Maintenance Statistics",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/stats",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "stats"]
+                },
+                "description": "Get maintenance statistics (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Maintenance by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/{{maintenanceId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "{{maintenanceId}}"]
+                },
+                "description": "Get a single maintenance record by ID (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Maintenance by Vehicle",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/vehicle/{{truckId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "vehicle", "{{truckId}}"]
+                },
+                "description": "Get all maintenance records for a specific vehicle (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Maintenance Record",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cost\": 1350,\n  \"remarks\": \"Updated maintenance record with additional notes\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/{{maintenanceId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "{{maintenanceId}}"]
+                },
+                "description": "Update a maintenance record (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Maintenance Status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"Completed\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/{{maintenanceId}}/status",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "{{maintenanceId}}", "status"]
+                },
+                "description": "Update maintenance status (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Maintenance Record",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/{{maintenanceId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "{{maintenanceId}}"]
+                },
+                "description": "Delete a maintenance record (Admin only)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Maintenance Alerts",
+          "item": [
+            {
+              "name": "Check All Maintenance Alerts",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/alerts/all",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "maintenances", "alerts", "all"]
+                },
+                "description": "Check maintenance alerts for all vehicles (Admin only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Check Maintenance Alerts for Vehicle",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/maintenances/alerts/vehicle/{{truckId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "alerts",
+                    "vehicle",
+                    "{{truckId}}"
+                  ]
+                },
+                "description": "Check maintenance alerts for a specific vehicle (Admin only)"
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "Maintenance management endpoints with rules, records, and automatic alerts (Admin only)"
+    },
+    {
       "name": "Health Check",
       "request": {
+        "auth": {
+          "type": "noauth"
+        },
         "method": "GET",
         "header": [],
         "url": {
