@@ -4,6 +4,9 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import truckRoutes from "./routes/truckRoutes.js";
+import trailerRoutes from "./routes/trailerRoutes.js";
+import tireRoutes from "./routes/tireRoutes.js";
 
 dotenv.config();
 
@@ -14,11 +17,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/trucks", truckRoutes);
+app.use("/api/trailers", trailerRoutes);
+app.use("/api/tires", tireRoutes);
 
-// Health check
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Server is running" });
 });

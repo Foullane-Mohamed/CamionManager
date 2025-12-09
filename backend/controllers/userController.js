@@ -1,5 +1,8 @@
 import * as authService from "../services/authService.js";
-import { validateApproval } from "../validators/authValidator.js";
+import {
+  validateApproval,
+  validateAdminCreation,
+} from "../validators/authValidator.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -67,6 +70,44 @@ export const deleteUser = async (req, res) => {
 
     await user.deleteOne();
     res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createAdminUser = async (req, res) => {
+  try {
+    const { error } = validateAdminCreation(req.body);
+    if (error)
+      return res.status(400).json({ message: error.details[0].message });
+
+    const { name, email, password } = req.body;
+
+    const userExists = await authService.findUserByEmail(email);
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const userData = {
+      name,
+      email,
+      password,
+      role: "admin",
+      accountStatus: "approved",
+    };
+
+    const user = await authService.createUser(userData);
+
+    res.status(201).json({
+      message: "Admin user created successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        accountStatus: user.accountStatus,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

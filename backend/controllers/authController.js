@@ -14,7 +14,6 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password,
-      role,
       phoneNumber,
       nationalId,
       licenseNumber,
@@ -32,17 +31,15 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password,
-      role: role || "chauffeur",
+      role: "chauffeur",
+      phoneNumber,
+      nationalId,
+      licenseNumber,
+      licenseType,
+      address,
+      dateOfBirth,
+      accountStatus: "pending",
     };
-
-    if (userData.role === "chauffeur") {
-      userData.phoneNumber = phoneNumber;
-      userData.nationalId = nationalId;
-      userData.licenseNumber = licenseNumber;
-      userData.licenseType = licenseType;
-      userData.address = address;
-      userData.dateOfBirth = dateOfBirth;
-    }
 
     const user = await authService.createUser(userData);
 
@@ -61,9 +58,7 @@ export const registerUser = async (req, res) => {
         accessToken,
         refreshToken,
         message:
-          user.role === "chauffeur"
-            ? "Registration successful. Your account is pending admin approval."
-            : "Registration successful.",
+          "Registration successful. Your account is pending admin approval.",
       });
     }
   } catch (error) {

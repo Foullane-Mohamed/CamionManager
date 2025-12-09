@@ -1,0 +1,1320 @@
+{
+  "info": {
+    "name": "CamionManager API",
+    "description": "Complete API collection for CamionManager backend - Truck Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "truckId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "trailerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tireId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Chauffeur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mohamed Alami\",\n  \"email\": \"mohamed@chauffeur.com\",\n  \"password\": \"chauffeur123\",\n  \"phoneNumber\": \"0612345678\",\n  \"nationalId\": \"AB123456\",\n  \"licenseNumber\": \"LIC123456\",\n  \"licenseType\": \"C\",\n  \"address\": \"123 Rue Mohammed V, Casablanca\",\n  \"dateOfBirth\": \"1985-05-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new chauffeur. Account will be pending until admin approves it. Note: role field is removed, registration is only for chauffeurs."
+          },
+          "response": []
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@camion.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login as admin user"
+          },
+          "response": []
+        },
+        {
+          "name": "Login Chauffeur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mohamed@chauffeur.com\",\n  \"password\": \"chauffeur123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login as chauffeur user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "profile"]
+            },
+            "description": "Get current user profile (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh"]
+            },
+            "description": "Refresh access token using refresh token"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Logout user and clear refresh token"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints for user registration, login, logout, and token management"
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Create Admin User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin2@camion.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "admin"]
+            },
+            "description": "Create a new admin user (Admin only). Only admins can create other admin accounts."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Get all users (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Chauffeurs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "pending"]
+            },
+            "description": "Get all chauffeurs with pending approval status (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{userId}}"]
+            },
+            "description": "Get user details by ID (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Chauffeur",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountStatus\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{userId}}", "approve"]
+            },
+            "description": "Approve a chauffeur account (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Chauffeur",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountStatus\": \"rejected\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{userId}}", "approve"]
+            },
+            "description": "Reject a chauffeur account (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{userId}}"]
+            },
+            "description": "Delete a user by ID (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "User management endpoints for admin operations"
+    },
+    {
+      "name": "Truck Management",
+      "item": [
+        {
+          "name": "Create Truck",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('truckId', response.truck._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"matricule\": \"999XYZ99\",\n  \"brand\": \"Mercedes-Benz\",\n  \"model\": \"Actros 1851\",\n  \"yearOfManufacture\": 2023,\n  \"status\": \"Disponible\",\n  \"currentMileage\": 5000,\n  \"fuelType\": \"Diesel\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks"]
+            },
+            "description": "Create a new truck (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Trucks",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks"]
+            },
+            "description": "Get all trucks (All authenticated users)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trucks with Filters",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks?status=Disponible&fuelType=Diesel&brand=Mercedes&minYear=2020&maxYear=2024",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Disponible",
+                  "description": "Filter by status: Disponible, En Mission, En Maintenance"
+                },
+                {
+                  "key": "fuelType",
+                  "value": "Diesel",
+                  "description": "Filter by fuel type: Diesel, Gasoline, Other"
+                },
+                {
+                  "key": "brand",
+                  "value": "Mercedes",
+                  "description": "Filter by brand (case-insensitive)"
+                },
+                {
+                  "key": "minYear",
+                  "value": "2020",
+                  "description": "Filter by minimum year"
+                },
+                {
+                  "key": "maxYear",
+                  "value": "2024",
+                  "description": "Filter by maximum year"
+                }
+              ]
+            },
+            "description": "Get trucks with multiple filters (All authenticated users)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Trucks",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks/available",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks", "available"]
+            },
+            "description": "Get only available trucks (status: Disponible)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Truck Statistics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks", "stats"]
+            },
+            "description": "Get truck statistics aggregated by status and fuel type (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Truck by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks/{{truckId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks", "{{truckId}}"]
+            },
+            "description": "Get truck details by ID (All authenticated users)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Truck",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"brand\": \"Mercedes-Benz\",\n  \"model\": \"Actros 1863\",\n  \"currentMileage\": 15000,\n  \"status\": \"En Mission\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks/{{truckId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks", "{{truckId}}"]
+            },
+            "description": "Update truck details (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Truck Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"En Maintenance\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks/{{truckId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks", "{{truckId}}", "status"]
+            },
+            "description": "Update only truck status (Admin only). Options: Disponible, En Mission, En Maintenance"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Truck",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trucks/{{truckId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trucks", "{{truckId}}"]
+            },
+            "description": "Delete a truck by ID (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Truck management endpoints with full CRUD operations"
+    },
+    {
+      "name": "Trailer Management",
+      "item": [
+        {
+          "name": "Create Trailer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('trailerId', response.trailer._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"matricule\": \"REM999XX\",\n  \"type\": \"Frigo\",\n  \"maximumLoad\": 25000,\n  \"status\": \"Disponible\",\n  \"currentMileage\": 5000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers"]
+            },
+            "description": "Create a new trailer (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Trailers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers"]
+            },
+            "description": "Get all trailers (All authenticated users)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trailers with Filters",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers?status=Disponible&type=Frigo&minLoad=20000&maxLoad=30000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Disponible",
+                  "description": "Filter by status: Disponible, En Mission, En Maintenance"
+                },
+                {
+                  "key": "type",
+                  "value": "Frigo",
+                  "description": "Filter by type: Frigo, Plateau, Fourgon, Citerne, Benne, Porte-conteneur"
+                },
+                {
+                  "key": "minLoad",
+                  "value": "20000",
+                  "description": "Filter by minimum load capacity"
+                },
+                {
+                  "key": "maxLoad",
+                  "value": "30000",
+                  "description": "Filter by maximum load capacity"
+                }
+              ]
+            },
+            "description": "Get trailers with multiple filters (All authenticated users)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Trailers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers/available",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers", "available"]
+            },
+            "description": "Get only available trailers (status: Disponible)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trailer Statistics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers", "stats"]
+            },
+            "description": "Get trailer statistics aggregated by status and type (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trailer by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers/{{trailerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers", "{{trailerId}}"]
+            },
+            "description": "Get trailer details by ID (All authenticated users)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Trailer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Plateau\",\n  \"maximumLoad\": 28000,\n  \"currentMileage\": 10000,\n  \"status\": \"En Mission\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers/{{trailerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers", "{{trailerId}}"]
+            },
+            "description": "Update trailer details (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Trailer Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"En Maintenance\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers/{{trailerId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers", "{{trailerId}}", "status"]
+            },
+            "description": "Update only trailer status (Admin only). Options: Disponible, En Mission, En Maintenance"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Trailer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/trailers/{{trailerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "trailers", "{{trailerId}}"]
+            },
+            "description": "Delete a trailer by ID (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Trailer management endpoints with full CRUD operations"
+    },
+    {
+      "name": "Tires",
+      "item": [
+        {
+          "name": "Create Tire",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data._id) {",
+                  "        pm.collectionVariables.set('tireId', jsonData.data._id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serialNumber\": \"TIRE100\",\n  \"brand\": \"Michelin\",\n  \"size\": \"315/80R22.5\",\n  \"status\": \"Bon\",\n  \"installationDate\": \"2023-06-15\",\n  \"vehiclePosition\": \"Front Left\",\n  \"associatedVehicleType\": \"Truck\",\n  \"associatedVehicleId\": \"{{truckId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tires",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires"]
+            },
+            "description": "Create a new tire (Admin only). Required fields: serialNumber, brand, size, installationDate, vehiclePosition, associatedVehicleType, associatedVehicleId"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Tires",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tires",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires"]
+            },
+            "description": "Get all tires with optional filters: status, brand, vehicleType, vehicleId, position"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tire by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tires/{{tireId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires", "{{tireId}}"]
+            },
+            "description": "Get a single tire by ID with populated vehicle information"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tires by Vehicle",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tires/vehicle/Truck/{{truckId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires", "vehicle", "Truck", "{{truckId}}"]
+            },
+            "description": "Get all tires for a specific vehicle (Truck or Trailer)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tires by Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tires/status/Bon",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires", "status", "Bon"]
+            },
+            "description": "Get all tires by status. Options: Bon, À remplacer, Usé"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tires Statistics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tires/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires", "stats"]
+            },
+            "description": "Get tire statistics including counts by status, brand, and vehicle type (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tire",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"À remplacer\",\n  \"vehiclePosition\": \"Rear Left\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tires/{{tireId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires", "{{tireId}}"]
+            },
+            "description": "Update tire information (Admin only). Can update any field except serialNumber"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tire Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Usé\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tires/{{tireId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires", "{{tireId}}", "status"]
+            },
+            "description": "Update only tire status (Admin only). Options: Bon, À remplacer, Usé"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tire",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tires/{{tireId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tires", "{{tireId}}"]
+            },
+            "description": "Delete a tire by ID (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Tire management endpoints with full CRUD operations and vehicle associations"
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Check if server is running"
+      },
+      "response": []
+    }
+  ]
+}

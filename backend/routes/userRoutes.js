@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  createAdminUser,
   getAllUsers,
   getPendingChauffeurs,
   updateAccountStatus,
@@ -10,10 +11,10 @@ import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-
 router.use(protect);
 router.use(adminOnly);
 
+router.post("/admin", createAdminUser);
 router.get("/", getAllUsers);
 router.get("/pending", getPendingChauffeurs);
 router.get("/:id", getUserById);

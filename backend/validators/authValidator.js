@@ -1,15 +1,10 @@
 import Joi from "joi";
 
 export const validateRegister = (data) => {
-  const baseSchema = {
+  const schema = Joi.object({
     name: Joi.string().min(3).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
-    role: Joi.string().valid("admin", "chauffeur").default("chauffeur"),
-  };
-
-
-  const chauffeurFields = {
     phoneNumber: Joi.string()
       .pattern(/^[0-9]{10,15}$/)
       .required(),
@@ -18,18 +13,6 @@ export const validateRegister = (data) => {
     licenseType: Joi.string().valid("B", "C", "D", "EC").required(),
     address: Joi.string().min(10).required(),
     dateOfBirth: Joi.date().max("now").required(),
-  };
-
-
-  const schema = Joi.object({
-    ...baseSchema,
-    ...chauffeurFields,
-  }).when(Joi.object({ role: Joi.string().valid("chauffeur") }).unknown(), {
-    then: Joi.object({
-      ...baseSchema,
-      ...chauffeurFields,
-    }),
-    otherwise: Joi.object(baseSchema),
   });
 
   return schema.validate(data);
@@ -46,6 +29,15 @@ export const validateLogin = (data) => {
 export const validateApproval = (data) => {
   const schema = Joi.object({
     accountStatus: Joi.string().valid("approved", "rejected").required(),
+  });
+  return schema.validate(data);
+};
+
+export const validateAdminCreation = (data) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
   });
   return schema.validate(data);
 };
