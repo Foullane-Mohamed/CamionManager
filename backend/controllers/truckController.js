@@ -31,7 +31,6 @@ export const createTruck = async (req, res) => {
       truck,
     });
   } catch (error) {
-    console.error("Error creating truck:", error);
     res.status(500).json({
       message: "Error creating truck",
       error: error.message,
@@ -56,7 +55,6 @@ export const getAllTrucks = async (req, res) => {
       trucks,
     });
   } catch (error) {
-    console.error("Error getting trucks:", error);
     res.status(500).json({
       message: "Error retrieving trucks",
       error: error.message,
@@ -76,7 +74,6 @@ export const getTruckById = async (req, res) => {
 
     res.status(200).json(truck);
   } catch (error) {
-    console.error("Error getting truck:", error);
     res.status(500).json({
       message: "Error retrieving truck",
       error: error.message,
@@ -119,7 +116,6 @@ export const updateTruck = async (req, res) => {
       truck,
     });
   } catch (error) {
-    console.error("Error updating truck:", error);
     res.status(500).json({
       message: "Error updating truck",
       error: error.message,
@@ -154,7 +150,6 @@ export const updateTruckStatus = async (req, res) => {
       truck,
     });
   } catch (error) {
-    console.error("Error updating truck status:", error);
     res.status(500).json({
       message: "Error updating truck status",
       error: error.message,
@@ -178,7 +173,6 @@ export const deleteTruck = async (req, res) => {
       message: "Truck deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting truck:", error);
     res.status(500).json({
       message: "Error deleting truck",
       error: error.message,
@@ -195,7 +189,6 @@ export const getAvailableTrucks = async (req, res) => {
       trucks,
     });
   } catch (error) {
-    console.error("Error getting available trucks:", error);
     res.status(500).json({
       message: "Error retrieving available trucks",
       error: error.message,
@@ -209,7 +202,6 @@ export const getTrucksStats = async (req, res) => {
 
     res.status(200).json(stats);
   } catch (error) {
-    console.error("Error getting truck statistics:", error);
     res.status(500).json({
       message: "Error retrieving truck statistics",
       error: error.message,

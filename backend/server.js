@@ -10,6 +10,7 @@ import tireRoutes from "./routes/tireRoutes.js";
 import fuelRoutes from "./routes/fuelRoutes.js";
 import tripRoutes from "./routes/tripRoutes.js";
 import maintenanceRoutes from "./routes/maintenanceRoutes.js";
+import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
 dotenv.config();
 
@@ -32,6 +33,10 @@ app.use("/api/maintenances", maintenanceRoutes);
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Server is running" });
 });
+
+// Error handling middleware (must be after routes)
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

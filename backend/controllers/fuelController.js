@@ -43,7 +43,6 @@ export const createFuel = async (req, res) => {
       data: fuel,
     });
   } catch (error) {
-    console.error("Error creating fuel record:", error);
     res.status(500).json({
       success: false,
       message: "Error creating fuel record",
@@ -73,7 +72,6 @@ export const getAllFuels = async (req, res) => {
       data: fuels,
     });
   } catch (error) {
-    console.error("Error fetching fuels:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching fuel records",
@@ -98,7 +96,6 @@ export const getFuelById = async (req, res) => {
       data: fuel,
     });
   } catch (error) {
-    console.error("Error fetching fuel:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching fuel record",
@@ -157,7 +154,6 @@ export const updateFuel = async (req, res) => {
       data: fuel,
     });
   } catch (error) {
-    console.error("Error updating fuel:", error);
     res.status(500).json({
       success: false,
       message: "Error updating fuel record",
@@ -182,7 +178,6 @@ export const deleteFuel = async (req, res) => {
       message: "Fuel record deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting fuel:", error);
     res.status(500).json({
       success: false,
       message: "Error deleting fuel record",
@@ -202,7 +197,6 @@ export const getFuelsByDriver = async (req, res) => {
       data: fuels,
     });
   } catch (error) {
-    console.error("Error fetching fuels by driver:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching fuel records by driver",
@@ -222,7 +216,6 @@ export const getFuelsByVehicle = async (req, res) => {
       data: fuels,
     });
   } catch (error) {
-    console.error("Error fetching fuels by vehicle:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching fuel records by vehicle",
@@ -242,7 +235,6 @@ export const getFuelsByTrip = async (req, res) => {
       data: fuels,
     });
   } catch (error) {
-    console.error("Error fetching fuels by trip:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching fuel records by trip",
@@ -260,7 +252,6 @@ export const getFuelsStats = async (req, res) => {
       data: stats,
     });
   } catch (error) {
-    console.error("Error fetching fuel statistics:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching fuel statistics",

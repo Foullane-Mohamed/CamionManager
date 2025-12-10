@@ -56,7 +56,6 @@ export const createTrip = async (req, res) => {
       data: trip,
     });
   } catch (error) {
-    console.error("Error creating trip:", error);
     res.status(500).json({
       success: false,
       message: "Error creating trip",
@@ -86,7 +85,6 @@ export const getAllTrips = async (req, res) => {
       data: trips,
     });
   } catch (error) {
-    console.error("Error fetching trips:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching trips",
@@ -111,7 +109,6 @@ export const getTripById = async (req, res) => {
       data: trip,
     });
   } catch (error) {
-    console.error("Error fetching trip:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching trip",
@@ -182,7 +179,6 @@ export const updateTrip = async (req, res) => {
       data: trip,
     });
   } catch (error) {
-    console.error("Error updating trip:", error);
     res.status(500).json({
       success: false,
       message: "Error updating trip",
@@ -220,7 +216,6 @@ export const updateTripStatus = async (req, res) => {
       data: trip,
     });
   } catch (error) {
-    console.error("Error updating trip status:", error);
     res.status(500).json({
       success: false,
       message: "Error updating trip status",
@@ -245,7 +240,6 @@ export const deleteTrip = async (req, res) => {
       message: "Trip deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting trip:", error);
     res.status(500).json({
       success: false,
       message: "Error deleting trip",
@@ -265,7 +259,6 @@ export const getTripsByDriver = async (req, res) => {
       data: trips,
     });
   } catch (error) {
-    console.error("Error fetching trips by driver:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching trips by driver",
@@ -285,7 +278,6 @@ export const getTripsByTruck = async (req, res) => {
       data: trips,
     });
   } catch (error) {
-    console.error("Error fetching trips by truck:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching trips by truck",
@@ -305,7 +297,6 @@ export const getTripsByStatus = async (req, res) => {
       data: trips,
     });
   } catch (error) {
-    console.error("Error fetching trips by status:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching trips by status",
@@ -323,7 +314,6 @@ export const getTripsStats = async (req, res) => {
       data: stats,
     });
   } catch (error) {
-    console.error("Error fetching trip statistics:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching trip statistics",
@@ -342,7 +332,6 @@ export const generateMissionOrderPDF = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error("Error generating mission order PDF:", error);
     res.status(500).json({
       success: false,
       message: "Error generating mission order PDF",

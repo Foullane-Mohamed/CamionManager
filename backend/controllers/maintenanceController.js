@@ -7,12 +7,8 @@ import {
   updateMaintenanceStatusValidator,
 } from "../validators/maintenanceValidator.js";
 
-// ========== MAINTENANCE RULE CONTROLLERS (Admin Only) ==========
-
-// Create a new maintenance rule
 export const createMaintenanceRule = async (req, res) => {
   try {
-    // Validate input
     const { error } = createMaintenanceRuleValidator(req.body);
     if (error) {
       return res.status(400).json({
@@ -21,7 +17,6 @@ export const createMaintenanceRule = async (req, res) => {
       });
     }
 
-    // Add createdBy field
     const ruleData = {
       ...req.body,
       createdBy: req.user.userId,
@@ -43,7 +38,6 @@ export const createMaintenanceRule = async (req, res) => {
   }
 };
 
-// Get all maintenance rules
 export const getAllMaintenanceRules = async (req, res) => {
   try {
     const filters = {
@@ -67,7 +61,6 @@ export const getAllMaintenanceRules = async (req, res) => {
   }
 };
 
-// Get a single maintenance rule by ID
 export const getMaintenanceRuleById = async (req, res) => {
   try {
     const rule = await maintenanceService.getMaintenanceRuleById(req.params.id);
@@ -84,10 +77,8 @@ export const getMaintenanceRuleById = async (req, res) => {
   }
 };
 
-// Update a maintenance rule
 export const updateMaintenanceRule = async (req, res) => {
   try {
-    // Validate input
     const { error } = updateMaintenanceRuleValidator(req.body);
     if (error) {
       return res.status(400).json({
@@ -117,7 +108,6 @@ export const updateMaintenanceRule = async (req, res) => {
   }
 };
 
-// Delete a maintenance rule
 export const deleteMaintenanceRule = async (req, res) => {
   try {
     await maintenanceService.deleteMaintenanceRule(req.params.id);
@@ -136,12 +126,8 @@ export const deleteMaintenanceRule = async (req, res) => {
   }
 };
 
-// ========== MAINTENANCE RECORD CONTROLLERS (Admin Only) ==========
-
-// Create a new maintenance record
 export const createMaintenance = async (req, res) => {
   try {
-    // Validate input
     const { error } = createMaintenanceValidator(req.body);
     if (error) {
       return res.status(400).json({
@@ -169,7 +155,6 @@ export const createMaintenance = async (req, res) => {
   }
 };
 
-// Get all maintenance records
 export const getAllMaintenances = async (req, res) => {
   try {
     const filters = {
@@ -197,7 +182,6 @@ export const getAllMaintenances = async (req, res) => {
   }
 };
 
-// Get a single maintenance record by ID
 export const getMaintenanceById = async (req, res) => {
   try {
     const maintenance = await maintenanceService.getMaintenanceById(
@@ -216,7 +200,6 @@ export const getMaintenanceById = async (req, res) => {
   }
 };
 
-// Get maintenance records by vehicle
 export const getMaintenancesByVehicle = async (req, res) => {
   try {
     const maintenances = await maintenanceService.getMaintenancesByVehicle(
@@ -236,10 +219,8 @@ export const getMaintenancesByVehicle = async (req, res) => {
   }
 };
 
-// Update a maintenance record
 export const updateMaintenance = async (req, res) => {
   try {
-    // Validate input
     const { error } = updateMaintenanceValidator(req.body);
     if (error) {
       return res.status(400).json({
@@ -269,10 +250,8 @@ export const updateMaintenance = async (req, res) => {
   }
 };
 
-// Update maintenance status
 export const updateMaintenanceStatus = async (req, res) => {
   try {
-    // Validate input
     const { error } = updateMaintenanceStatusValidator(req.body);
     if (error) {
       return res.status(400).json({
@@ -301,7 +280,6 @@ export const updateMaintenanceStatus = async (req, res) => {
   }
 };
 
-// Delete a maintenance record
 export const deleteMaintenance = async (req, res) => {
   try {
     await maintenanceService.deleteMaintenance(req.params.id);
@@ -320,9 +298,6 @@ export const deleteMaintenance = async (req, res) => {
   }
 };
 
-// ========== ALERT CONTROLLERS (Admin Only) ==========
-
-// Check maintenance alerts for a specific vehicle
 export const checkMaintenanceAlerts = async (req, res) => {
   try {
     const alerts = await maintenanceService.checkMaintenanceAlerts(
@@ -342,7 +317,6 @@ export const checkMaintenanceAlerts = async (req, res) => {
   }
 };
 
-// Check maintenance alerts for all vehicles
 export const checkAllMaintenanceAlerts = async (req, res) => {
   try {
     const alerts = await maintenanceService.checkAllMaintenanceAlerts();
@@ -361,7 +335,6 @@ export const checkAllMaintenanceAlerts = async (req, res) => {
   }
 };
 
-// Get maintenance statistics
 export const getMaintenanceStatistics = async (req, res) => {
   try {
     const filters = {

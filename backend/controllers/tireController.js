@@ -41,7 +41,6 @@ export const createTire = async (req, res) => {
       tire,
     });
   } catch (error) {
-    console.error("Error creating tire:", error);
     res.status(500).json({
       message: "Error creating tire",
       error: error.message,
@@ -66,7 +65,6 @@ export const getAllTires = async (req, res) => {
       tires,
     });
   } catch (error) {
-    console.error("Error getting tires:", error);
     res.status(500).json({
       message: "Error retrieving tires",
       error: error.message,
@@ -86,7 +84,6 @@ export const getTireById = async (req, res) => {
 
     res.status(200).json(tire);
   } catch (error) {
-    console.error("Error getting tire:", error);
     res.status(500).json({
       message: "Error retrieving tire",
       error: error.message,
@@ -144,7 +141,6 @@ export const updateTire = async (req, res) => {
       tire,
     });
   } catch (error) {
-    console.error("Error updating tire:", error);
     res.status(500).json({
       message: "Error updating tire",
       error: error.message,
@@ -179,7 +175,6 @@ export const updateTireStatus = async (req, res) => {
       tire,
     });
   } catch (error) {
-    console.error("Error updating tire status:", error);
     res.status(500).json({
       message: "Error updating tire status",
       error: error.message,
@@ -203,7 +198,6 @@ export const deleteTire = async (req, res) => {
       message: "Tire deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting tire:", error);
     res.status(500).json({
       message: "Error deleting tire",
       error: error.message,
@@ -222,7 +216,6 @@ export const getTiresByVehicle = async (req, res) => {
       tires,
     });
   } catch (error) {
-    console.error("Error getting tires by vehicle:", error);
     res.status(500).json({
       message: "Error retrieving tires by vehicle",
       error: error.message,
@@ -241,7 +234,6 @@ export const getTiresByStatus = async (req, res) => {
       tires,
     });
   } catch (error) {
-    console.error("Error getting tires by status:", error);
     res.status(500).json({
       message: "Error retrieving tires by status",
       error: error.message,
@@ -255,7 +247,6 @@ export const getTiresStats = async (req, res) => {
 
     res.status(200).json(stats);
   } catch (error) {
-    console.error("Error getting tire statistics:", error);
     res.status(500).json({
       message: "Error retrieving tire statistics",
       error: error.message,

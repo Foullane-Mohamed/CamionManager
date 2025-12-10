@@ -31,7 +31,6 @@ export const createTrailer = async (req, res) => {
       trailer,
     });
   } catch (error) {
-    console.error("Error creating trailer:", error);
     res.status(500).json({
       message: "Error creating trailer",
       error: error.message,
@@ -55,7 +54,6 @@ export const getAllTrailers = async (req, res) => {
       trailers,
     });
   } catch (error) {
-    console.error("Error getting trailers:", error);
     res.status(500).json({
       message: "Error retrieving trailers",
       error: error.message,
@@ -75,7 +73,6 @@ export const getTrailerById = async (req, res) => {
 
     res.status(200).json(trailer);
   } catch (error) {
-    console.error("Error getting trailer:", error);
     res.status(500).json({
       message: "Error retrieving trailer",
       error: error.message,
@@ -121,7 +118,6 @@ export const updateTrailer = async (req, res) => {
       trailer,
     });
   } catch (error) {
-    console.error("Error updating trailer:", error);
     res.status(500).json({
       message: "Error updating trailer",
       error: error.message,
@@ -156,7 +152,6 @@ export const updateTrailerStatus = async (req, res) => {
       trailer,
     });
   } catch (error) {
-    console.error("Error updating trailer status:", error);
     res.status(500).json({
       message: "Error updating trailer status",
       error: error.message,
@@ -180,7 +175,6 @@ export const deleteTrailer = async (req, res) => {
       message: "Trailer deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting trailer:", error);
     res.status(500).json({
       message: "Error deleting trailer",
       error: error.message,
@@ -197,7 +191,6 @@ export const getAvailableTrailers = async (req, res) => {
       trailers,
     });
   } catch (error) {
-    console.error("Error getting available trailers:", error);
     res.status(500).json({
       message: "Error retrieving available trailers",
       error: error.message,
@@ -211,7 +204,6 @@ export const getTrailersStats = async (req, res) => {
 
     res.status(200).json(stats);
   } catch (error) {
-    console.error("Error getting trailer statistics:", error);
     res.status(500).json({
       message: "Error retrieving trailer statistics",
       error: error.message,
