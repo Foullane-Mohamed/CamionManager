@@ -1,0 +1,199 @@
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - role
+      properties:
+        _id:
+          type: string
+          description: Auto-generated MongoDB ID
+          example: "507f1f77bcf86cd799439011"
+        name:
+          type: string
+          minLength: 3
+          maxLength: 100
+          description: User's full name
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          description: User's email address (unique)
+          example: "john.doe@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 6
+          description: User's password (hashed in database)
+          writeOnly: true
+        role:
+          type: string
+          enum: [admin, chauffeur]
+          default: chauffeur
+          description: User's role in the system
+          example: "chauffeur"
+        accountStatus:
+          type: string
+          enum: [pending, approved, rejected]
+          description: Account approval status (chauffeurs start as pending)
+          example: "approved"
+        phoneNumber:
+          type: string
+          pattern: "^[0-9]{10,15}$"
+          description: Phone number (required for chauffeurs)
+          example: "1234567890"
+        nationalId:
+          type: string
+          minLength: 5
+          maxLength: 50
+          description: National ID number (unique, required for chauffeurs)
+          example: "NAT123456"
+        licenseNumber:
+          type: string
+          minLength: 5
+          maxLength: 50
+          description: Driver's license number (unique, required for chauffeurs)
+          example: "LIC789012"
+        licenseType:
+          type: string
+          enum: [B, C, D, EC]
+          description: Driver's license type (required for chauffeurs)
+          example: "C"
+        address:
+          type: string
+          minLength: 10
+          maxLength: 500
+          description: User's address (required for chauffeurs)
+          example: "123 Main Street, City, Country"
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2024-01-20T14:45:00Z"
+
+    UserLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "admin@example.com"
+        password:
+          type: string
+          format: password
+          description: User's password
+          example: "password123"
+
+    UserRegister:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - role
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 100
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 6
+          example: "password123"
+        role:
+          type: string
+          enum: [admin, chauffeur]
+          default: chauffeur
+          example: "chauffeur"
+        phoneNumber:
+          type: string
+          example: "1234567890"
+          description: Required if role is chauffeur
+        nationalId:
+          type: string
+          example: "NAT123456"
+          description: Required if role is chauffeur
+        licenseNumber:
+          type: string
+          example: "LIC789012"
+          description: Required if role is chauffeur
+        licenseType:
+          type: string
+          enum: [B, C, D, EC]
+          example: "C"
+          description: Required if role is chauffeur
+        address:
+          type: string
+          example: "123 Main Street, City, Country"
+          description: Required if role is chauffeur
+
+    AuthResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "507f1f77bcf86cd799439011"
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "john.doe@example.com"
+        role:
+          type: string
+          example: "admin"
+        accountStatus:
+          type: string
+          example: "approved"
+        token:
+          type: string
+          description: JWT access token for authentication
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    UserProfile:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        accountStatus:
+          type: string
+        phoneNumber:
+          type: string
+        nationalId:
+          type: string
+        licenseNumber:
+          type: string
+        licenseType:
+          type: string
+        address:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

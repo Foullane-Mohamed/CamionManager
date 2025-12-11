@@ -1,0 +1,188 @@
+components:
+  schemas:
+    Tire:
+      type: object
+      required:
+        - serialNumber
+        - brand
+        - size
+        - installationDate
+        - vehiclePosition
+        - associatedVehicleType
+        - associatedVehicleId
+      properties:
+        _id:
+          type: string
+          description: Auto-generated MongoDB ID
+          example: "507f1f77bcf86cd799439011"
+        serialNumber:
+          type: string
+          description: Tire serial number (unique, uppercase)
+          example: "TIRE-001"
+        brand:
+          type: string
+          description: Tire brand/manufacturer
+          example: "Michelin"
+        size:
+          type: string
+          description: Tire size specification
+          example: "315/80R22.5"
+        status:
+          type: string
+          enum: [Bon, À remplacer, Usé]
+          default: Bon
+          description: Tire condition status
+          example: "Bon"
+        installationDate:
+          type: string
+          format: date
+          description: Date when tire was installed
+          example: "2024-01-15"
+        vehiclePosition:
+          type: string
+          enum:
+            - Front Left
+            - Front Right
+            - Rear Left
+            - Rear Right
+            - Spare
+            - Trailer Front Left
+            - Trailer Front Right
+            - Trailer Rear Left
+            - Trailer Rear Right
+          description: Position of tire on vehicle
+          example: "Front Left"
+        associatedVehicleType:
+          type: string
+          enum: [Truck, Trailer]
+          description: Type of vehicle the tire is associated with
+          example: "Truck"
+        associatedVehicleId:
+          type: string
+          description: MongoDB ID of the associated vehicle (Truck or Trailer)
+          example: "507f1f77bcf86cd799439011"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-01-20T14:45:00Z"
+
+    TireInput:
+      type: object
+      required:
+        - serialNumber
+        - brand
+        - size
+        - installationDate
+        - vehiclePosition
+        - associatedVehicleType
+        - associatedVehicleId
+      properties:
+        serialNumber:
+          type: string
+          example: "TIRE-001"
+        brand:
+          type: string
+          example: "Michelin"
+        size:
+          type: string
+          example: "315/80R22.5"
+        status:
+          type: string
+          enum: [Bon, À remplacer, Usé]
+          example: "Bon"
+        installationDate:
+          type: string
+          format: date
+          example: "2024-01-15"
+        vehiclePosition:
+          type: string
+          enum:
+            - Front Left
+            - Front Right
+            - Rear Left
+            - Rear Right
+            - Spare
+            - Trailer Front Left
+            - Trailer Front Right
+            - Trailer Rear Left
+            - Trailer Rear Right
+          example: "Front Left"
+        associatedVehicleType:
+          type: string
+          enum: [Truck, Trailer]
+          example: "Truck"
+        associatedVehicleId:
+          type: string
+          example: "507f1f77bcf86cd799439011"
+
+    TireUpdate:
+      type: object
+      properties:
+        serialNumber:
+          type: string
+          example: "TIRE-001"
+        brand:
+          type: string
+          example: "Michelin"
+        size:
+          type: string
+          example: "315/80R22.5"
+        status:
+          type: string
+          enum: [Bon, À remplacer, Usé]
+          example: "À remplacer"
+        installationDate:
+          type: string
+          format: date
+          example: "2024-01-15"
+        vehiclePosition:
+          type: string
+          example: "Rear Left"
+        associatedVehicleType:
+          type: string
+          enum: [Truck, Trailer]
+          example: "Truck"
+        associatedVehicleId:
+          type: string
+          example: "507f1f77bcf86cd799439011"
+
+    TireStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [Bon, À remplacer, Usé]
+          example: "À remplacer"
+
+    TireStats:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 200
+        bon:
+          type: integer
+          example: 150
+        aRemplacer:
+          type: integer
+          example: 30
+        use:
+          type: integer
+          example: 20
+        byBrand:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: "Michelin"
+              count:
+                type: integer
+                example: 80

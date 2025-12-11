@@ -1,0 +1,288 @@
+/tires:
+  get:
+    tags:
+      - Tires
+    summary: Get all tires
+    description: Retrieve a list of all tires with optional filters
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum: [Bon, À remplacer, Usé]
+        description: Filter by tire status
+      - in: query
+        name: brand
+        schema:
+          type: string
+        description: Filter by tire brand
+      - in: query
+        name: associatedVehicleType
+        schema:
+          type: string
+          enum: [Truck, Trailer]
+        description: Filter by vehicle type
+    responses:
+      "200":
+        description: List of tires retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tire"
+      "401":
+        description: Unauthorized
+
+  post:
+    tags:
+      - Tires
+    summary: Create a new tire record
+    description: Add a new tire to the system (Admin only)
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TireInput"
+    responses:
+      "201":
+        description: Tire created successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tire"
+      "400":
+        description: Invalid input data or duplicate serial number
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Error"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/tires/stats:
+  get:
+    tags:
+      - Tires
+    summary: Get tire statistics
+    description: Get aggregated statistics about tires (Admin only)
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: Tire statistics retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TireStats"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/tires/status/{status}:
+  get:
+    tags:
+      - Tires
+    summary: Get tires by status
+    description: Retrieve all tires with a specific status
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: status
+        required: true
+        schema:
+          type: string
+          enum: [Bon, À remplacer, Usé]
+        description: Tire status
+    responses:
+      "200":
+        description: List of tires with specified status
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tire"
+      "401":
+        description: Unauthorized
+
+/tires/vehicle/{vehicleType}/{vehicleId}:
+  get:
+    tags:
+      - Tires
+    summary: Get tires by vehicle
+    description: Retrieve all tires associated with a specific vehicle
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: vehicleType
+        required: true
+        schema:
+          type: string
+          enum: [Truck, Trailer]
+        description: Type of vehicle
+      - in: path
+        name: vehicleId
+        required: true
+        schema:
+          type: string
+        description: Vehicle ID
+    responses:
+      "200":
+        description: List of tires for the specified vehicle
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tire"
+      "404":
+        description: Vehicle not found
+      "401":
+        description: Unauthorized
+
+/tires/{id}:
+  get:
+    tags:
+      - Tires
+    summary: Get tire by ID
+    description: Retrieve a specific tire's details
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Tire ID
+    responses:
+      "200":
+        description: Tire retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tire"
+      "404":
+        description: Tire not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Error"
+      "401":
+        description: Unauthorized
+
+  put:
+    tags:
+      - Tires
+    summary: Update tire
+    description: Update a tire's information (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Tire ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TireUpdate"
+    responses:
+      "200":
+        description: Tire updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tire"
+      "400":
+        description: Invalid input data
+      "404":
+        description: Tire not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+  delete:
+    tags:
+      - Tires
+    summary: Delete tire
+    description: Delete a tire record (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Tire ID
+    responses:
+      "200":
+        description: Tire deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Tire deleted successfully"
+      "404":
+        description: Tire not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/tires/{id}/status:
+  patch:
+    tags:
+      - Tires
+    summary: Update tire status
+    description: Update only the status of a tire (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Tire ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TireStatusUpdate"
+    responses:
+      "200":
+        description: Tire status updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tire"
+      "400":
+        description: Invalid status value
+      "404":
+        description: Tire not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required

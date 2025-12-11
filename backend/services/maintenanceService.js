@@ -2,16 +2,13 @@ import Maintenance from "../models/Maintenance.js";
 import MaintenanceRule from "../models/MaintenanceRule.js";
 import Truck from "../models/Truck.js";
 
-// ========== MAINTENANCE RULE SERVICES ==========
 
-// Create a new maintenance rule (admin only)
 export const createMaintenanceRule = async (ruleData) => {
   const rule = new MaintenanceRule(ruleData);
   await rule.save();
   return rule;
 };
 
-// Get all maintenance rules with optional filtering
 export const getAllMaintenanceRules = async (filters = {}) => {
   const query = {};
 
@@ -31,7 +28,6 @@ export const getAllMaintenanceRules = async (filters = {}) => {
   return rules;
 };
 
-// Get a single maintenance rule by ID
 export const getMaintenanceRuleById = async (ruleId) => {
   const rule = await MaintenanceRule.findById(ruleId)
     .populate("createdBy", "firstName lastName email")
@@ -44,7 +40,6 @@ export const getMaintenanceRuleById = async (ruleId) => {
   return rule;
 };
 
-// Update a maintenance rule (admin only)
 export const updateMaintenanceRule = async (ruleId, updateData, userId) => {
   const rule = await MaintenanceRule.findById(ruleId);
 
@@ -52,7 +47,6 @@ export const updateMaintenanceRule = async (ruleId, updateData, userId) => {
     throw new Error("Maintenance rule not found");
   }
 
-  // Update fields
   Object.keys(updateData).forEach((key) => {
     rule[key] = updateData[key];
   });
@@ -63,7 +57,6 @@ export const updateMaintenanceRule = async (ruleId, updateData, userId) => {
   return rule;
 };
 
-// Delete a maintenance rule (admin only)
 export const deleteMaintenanceRule = async (ruleId) => {
   const rule = await MaintenanceRule.findByIdAndDelete(ruleId);
 
@@ -74,17 +67,13 @@ export const deleteMaintenanceRule = async (ruleId) => {
   return rule;
 };
 
-// ========== MAINTENANCE RECORD SERVICES ==========
 
-// Create a new maintenance record
 export const createMaintenance = async (maintenanceData, userId) => {
-  // Verify vehicle exists
   const vehicle = await Truck.findById(maintenanceData.linkedVehicle);
   if (!vehicle) {
     throw new Error("Linked vehicle not found");
   }
 
-  // Verify rule exists if provided
   if (maintenanceData.linkedRule) {
     const rule = await MaintenanceRule.findById(maintenanceData.linkedRule);
     if (!rule) {
@@ -92,7 +81,6 @@ export const createMaintenance = async (maintenanceData, userId) => {
     }
   }
 
-  // Verify mileage is not less than vehicle's current mileage
   if (maintenanceData.vehicleMileageAtMaintenance < vehicle.currentMileage) {
     throw new Error(
       "Maintenance mileage cannot be less than vehicle's current mileage"
@@ -104,7 +92,6 @@ export const createMaintenance = async (maintenanceData, userId) => {
   const maintenance = new Maintenance(maintenanceData);
   await maintenance.save();
 
-  // Update vehicle mileage if maintenance mileage is higher
   if (maintenanceData.vehicleMileageAtMaintenance > vehicle.currentMileage) {
     vehicle.currentMileage = maintenanceData.vehicleMileageAtMaintenance;
     await vehicle.save();
@@ -113,7 +100,6 @@ export const createMaintenance = async (maintenanceData, userId) => {
   return maintenance;
 };
 
-// Get all maintenance records with optional filtering
 export const getAllMaintenances = async (filters = {}) => {
   const query = {};
 
@@ -153,7 +139,6 @@ export const getAllMaintenances = async (filters = {}) => {
   return maintenances;
 };
 
-// Get a single maintenance record by ID
 export const getMaintenanceById = async (maintenanceId) => {
   const maintenance = await Maintenance.findById(maintenanceId)
     .populate("linkedVehicle", "matricule brand model currentMileage")
@@ -170,7 +155,6 @@ export const getMaintenanceById = async (maintenanceId) => {
   return maintenance;
 };
 
-// Get maintenance records by vehicle
 export const getMaintenancesByVehicle = async (vehicleId) => {
   const vehicle = await Truck.findById(vehicleId);
   if (!vehicle) {
@@ -185,7 +169,6 @@ export const getMaintenancesByVehicle = async (vehicleId) => {
   return maintenances;
 };
 
-// Update a maintenance record
 export const updateMaintenance = async (maintenanceId, updateData, userId) => {
   const maintenance = await Maintenance.findById(maintenanceId);
 
@@ -193,7 +176,6 @@ export const updateMaintenance = async (maintenanceId, updateData, userId) => {
     throw new Error("Maintenance record not found");
   }
 
-  // Verify vehicle exists if being updated
   if (updateData.linkedVehicle) {
     const vehicle = await Truck.findById(updateData.linkedVehicle);
     if (!vehicle) {
@@ -201,7 +183,6 @@ export const updateMaintenance = async (maintenanceId, updateData, userId) => {
     }
   }
 
-  // Verify rule exists if being updated
   if (updateData.linkedRule) {
     const rule = await MaintenanceRule.findById(updateData.linkedRule);
     if (!rule) {
@@ -209,7 +190,6 @@ export const updateMaintenance = async (maintenanceId, updateData, userId) => {
     }
   }
 
-  // Update fields
   Object.keys(updateData).forEach((key) => {
     maintenance[key] = updateData[key];
   });
@@ -219,7 +199,6 @@ export const updateMaintenance = async (maintenanceId, updateData, userId) => {
   return maintenance;
 };
 
-// Update maintenance status
 export const updateMaintenanceStatus = async (maintenanceId, newStatus) => {
   const maintenance = await Maintenance.findById(maintenanceId);
 
@@ -233,7 +212,6 @@ export const updateMaintenanceStatus = async (maintenanceId, newStatus) => {
   return maintenance;
 };
 
-// Delete a maintenance record
 export const deleteMaintenance = async (maintenanceId) => {
   const maintenance = await Maintenance.findByIdAndDelete(maintenanceId);
 
@@ -244,9 +222,7 @@ export const deleteMaintenance = async (maintenanceId) => {
   return maintenance;
 };
 
-// ========== ALERT SERVICES ==========
 
-// Check maintenance alerts for a specific vehicle
 export const checkMaintenanceAlerts = async (vehicleId) => {
   const vehicle = await Truck.findById(vehicleId);
   if (!vehicle) {
@@ -257,7 +233,6 @@ export const checkMaintenanceAlerts = async (vehicleId) => {
   const alerts = [];
 
   for (const rule of activeRules) {
-    // Get the last maintenance of this type for this vehicle
     const lastMaintenance = await Maintenance.findOne({
       linkedVehicle: vehicleId,
       maintenanceType: rule.maintenanceType,
@@ -267,19 +242,16 @@ export const checkMaintenanceAlerts = async (vehicleId) => {
     let alert = null;
 
     if (rule.maintenanceType === "Oil Change") {
-      // Check both mileage and time thresholds
       let mileageAlert = false;
       let timeAlert = false;
 
       if (lastMaintenance) {
-        // Check mileage
         const mileageSinceMaintenance =
           vehicle.currentMileage - lastMaintenance.vehicleMileageAtMaintenance;
         if (mileageSinceMaintenance >= rule.mileageThreshold) {
           mileageAlert = true;
         }
 
-        // Check time
         const daysSinceMaintenance = Math.floor(
           (Date.now() - lastMaintenance.maintenanceDate) / (1000 * 60 * 60 * 24)
         );
@@ -287,7 +259,6 @@ export const checkMaintenanceAlerts = async (vehicleId) => {
           timeAlert = true;
         }
       } else {
-        // No previous maintenance, alert based on current mileage
         if (vehicle.currentMileage >= rule.mileageThreshold) {
           mileageAlert = true;
         }
@@ -318,7 +289,6 @@ export const checkMaintenanceAlerts = async (vehicleId) => {
         };
       }
     } else if (rule.maintenanceType === "Vehicle Revision") {
-      // Check mileage threshold only
       if (lastMaintenance) {
         const mileageSinceMaintenance =
           vehicle.currentMileage - lastMaintenance.vehicleMileageAtMaintenance;
@@ -337,7 +307,6 @@ export const checkMaintenanceAlerts = async (vehicleId) => {
           };
         }
       } else {
-        // No previous maintenance, alert based on current mileage
         if (vehicle.currentMileage >= rule.mileageThreshold) {
           alert = {
             vehicleId: vehicle._id,
@@ -354,7 +323,6 @@ export const checkMaintenanceAlerts = async (vehicleId) => {
         }
       }
     }
-    // Note: Tire Replacement doesn't have automatic alerts based on rules
 
     if (alert) {
       alerts.push(alert);
@@ -364,7 +332,6 @@ export const checkMaintenanceAlerts = async (vehicleId) => {
   return alerts;
 };
 
-// Check maintenance alerts for all vehicles
 export const checkAllMaintenanceAlerts = async () => {
   const vehicles = await Truck.find();
   const allAlerts = [];
@@ -377,7 +344,6 @@ export const checkAllMaintenanceAlerts = async () => {
   return allAlerts;
 };
 
-// Get maintenance statistics
 export const getMaintenanceStatistics = async (filters = {}) => {
   const query = {};
 
@@ -391,10 +357,8 @@ export const getMaintenanceStatistics = async (filters = {}) => {
     }
   }
 
-  // Total maintenance records
   const totalMaintenances = await Maintenance.countDocuments(query);
 
-  // Total cost
   const costAggregation = await Maintenance.aggregate([
     { $match: query },
     { $group: { _id: null, totalCost: { $sum: "$cost" } } },
@@ -402,7 +366,6 @@ export const getMaintenanceStatistics = async (filters = {}) => {
   const totalCost =
     costAggregation.length > 0 ? costAggregation[0].totalCost : 0;
 
-  // By maintenance type
   const byType = await Maintenance.aggregate([
     { $match: query },
     {
@@ -415,7 +378,6 @@ export const getMaintenanceStatistics = async (filters = {}) => {
     { $sort: { count: -1 } },
   ]);
 
-  // By vehicle
   const byVehicle = await Maintenance.aggregate([
     { $match: query },
     {
@@ -446,7 +408,6 @@ export const getMaintenanceStatistics = async (filters = {}) => {
     },
   ]);
 
-  // By status
   const byStatus = await Maintenance.aggregate([
     { $match: query },
     {
@@ -457,7 +418,6 @@ export const getMaintenanceStatistics = async (filters = {}) => {
     },
   ]);
 
-  // Alert-triggered maintenances
   const alertTriggered = await Maintenance.countDocuments({
     ...query,
     isAlertTriggered: true,

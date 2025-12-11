@@ -1,0 +1,194 @@
+components:
+  schemas:
+    Fuel:
+      type: object
+      required:
+        - quantity
+        - totalCost
+        - pricePerLitre
+        - fuelStationLocation
+        - dateOfOperation
+        - linkedDriver
+        - linkedVehicle
+      properties:
+        _id:
+          type: string
+          description: Auto-generated MongoDB ID
+          example: "507f1f77bcf86cd799439011"
+        quantity:
+          type: number
+          minimum: 0
+          description: Fuel quantity in litres
+          example: 250.5
+        totalCost:
+          type: number
+          minimum: 0
+          description: Total cost of fuel purchase
+          example: 3507.50
+        pricePerLitre:
+          type: number
+          minimum: 0
+          description: Price per litre of fuel
+          example: 14.00
+        fuelStationLocation:
+          type: string
+          description: Location/name of fuel station
+          example: "Shell Station - Casablanca Highway"
+        dateOfOperation:
+          type: string
+          format: date-time
+          description: Date and time of fuel purchase
+          example: "2024-01-15T10:30:00Z"
+        linkedTrip:
+          type: string
+          nullable: true
+          description: ID of related trip (optional)
+          example: "507f1f77bcf86cd799439012"
+        linkedDriver:
+          type: string
+          description: ID of driver who performed the fuel operation
+          example: "507f1f77bcf86cd799439013"
+        linkedVehicle:
+          type: string
+          description: ID of vehicle that was refueled
+          example: "507f1f77bcf86cd799439014"
+        notes:
+          type: string
+          description: Additional notes or remarks
+          example: "Full tank refill"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:35:00Z"
+
+    FuelInput:
+      type: object
+      required:
+        - quantity
+        - totalCost
+        - pricePerLitre
+        - fuelStationLocation
+        - dateOfOperation
+        - linkedDriver
+        - linkedVehicle
+      properties:
+        quantity:
+          type: number
+          minimum: 0
+          example: 250.5
+        totalCost:
+          type: number
+          minimum: 0
+          example: 3507.50
+        pricePerLitre:
+          type: number
+          minimum: 0
+          example: 14.00
+        fuelStationLocation:
+          type: string
+          example: "Shell Station - Casablanca Highway"
+        dateOfOperation:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        linkedTrip:
+          type: string
+          nullable: true
+          example: "507f1f77bcf86cd799439012"
+        linkedDriver:
+          type: string
+          example: "507f1f77bcf86cd799439013"
+        linkedVehicle:
+          type: string
+          example: "507f1f77bcf86cd799439014"
+        notes:
+          type: string
+          example: "Full tank refill"
+
+    FuelUpdate:
+      type: object
+      properties:
+        quantity:
+          type: number
+          example: 260.0
+        totalCost:
+          type: number
+          example: 3640.00
+        pricePerLitre:
+          type: number
+          example: 14.00
+        fuelStationLocation:
+          type: string
+          example: "Total Station - Rabat"
+        dateOfOperation:
+          type: string
+          format: date-time
+          example: "2024-01-15T11:00:00Z"
+        linkedTrip:
+          type: string
+          example: "507f1f77bcf86cd799439012"
+        linkedDriver:
+          type: string
+          example: "507f1f77bcf86cd799439013"
+        linkedVehicle:
+          type: string
+          example: "507f1f77bcf86cd799439014"
+        notes:
+          type: string
+          example: "Updated fuel record"
+
+    FuelStats:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          description: Total number of fuel records
+          example: 350
+        totalQuantity:
+          type: number
+          description: Total fuel quantity in litres
+          example: 87625.5
+        totalCost:
+          type: number
+          description: Total cost spent on fuel
+          example: 1226757.00
+        averagePricePerLitre:
+          type: number
+          description: Average price per litre
+          example: 14.00
+        byDriver:
+          type: array
+          description: Fuel consumption grouped by driver
+          items:
+            type: object
+            properties:
+              driverId:
+                type: string
+              driverName:
+                type: string
+              totalQuantity:
+                type: number
+              totalCost:
+                type: number
+              recordCount:
+                type: integer
+        byVehicle:
+          type: array
+          description: Fuel consumption grouped by vehicle
+          items:
+            type: object
+            properties:
+              vehicleId:
+                type: string
+              vehicleMatricule:
+                type: string
+              totalQuantity:
+                type: number
+              totalCost:
+                type: number
+              recordCount:
+                type: integer

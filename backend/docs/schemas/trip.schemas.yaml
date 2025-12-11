@@ -1,0 +1,227 @@
+components:
+  schemas:
+    Trip:
+      type: object
+      required:
+        - tripNumber
+        - assignedTruck
+        - assignedDriver
+        - startPoint
+        - destinationPoint
+        - departureDate
+        - expectedArrivalDate
+        - mileageAtDeparture
+      properties:
+        _id:
+          type: string
+          description: Auto-generated MongoDB ID
+          example: "507f1f77bcf86cd799439011"
+        tripNumber:
+          type: string
+          description: Unique trip identifier (auto-generated, uppercase)
+          example: "TRIP-2024-001"
+        assignedTruck:
+          type: string
+          description: ID of assigned truck
+          example: "507f1f77bcf86cd799439011"
+        assignedTrailer:
+          type: string
+          nullable: true
+          description: ID of assigned trailer (optional)
+          example: "507f1f77bcf86cd799439012"
+        assignedDriver:
+          type: string
+          description: ID of assigned driver (User with chauffeur role)
+          example: "507f1f77bcf86cd799439013"
+        startPoint:
+          type: string
+          description: Starting location/address
+          example: "Casablanca, Morocco"
+        destinationPoint:
+          type: string
+          description: Destination location/address
+          example: "Marrakech, Morocco"
+        departureDate:
+          type: string
+          format: date-time
+          description: Scheduled departure date and time
+          example: "2024-01-15T08:00:00Z"
+        expectedArrivalDate:
+          type: string
+          format: date-time
+          description: Expected arrival date and time
+          example: "2024-01-15T14:00:00Z"
+        actualArrivalDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: Actual arrival date and time (set when trip is completed)
+          example: "2024-01-15T14:30:00Z"
+        status:
+          type: string
+          enum: [À faire, En cours, Terminé]
+          default: À faire
+          description: Current trip status
+          example: "En cours"
+        mileageAtDeparture:
+          type: number
+          minimum: 0
+          description: Truck's odometer reading at departure (km)
+          example: 150000
+        mileageAtArrival:
+          type: number
+          minimum: 0
+          nullable: true
+          description: Truck's odometer reading at arrival (km)
+          example: 150240
+        driverRemarks:
+          type: string
+          description: Driver's notes or remarks about the trip
+          example: "Traffic was heavy near the city"
+        distance:
+          type: number
+          nullable: true
+          description: Calculated trip distance (km)
+          example: 240
+        missionOrderPDF:
+          type: string
+          nullable: true
+          description: URL or path to mission order PDF document
+          example: "/uploads/mission-orders/TRIP-2024-001.pdf"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T14:35:00Z"
+
+    TripInput:
+      type: object
+      required:
+        - assignedTruck
+        - assignedDriver
+        - startPoint
+        - destinationPoint
+        - departureDate
+        - expectedArrivalDate
+        - mileageAtDeparture
+      properties:
+        assignedTruck:
+          type: string
+          example: "507f1f77bcf86cd799439011"
+        assignedTrailer:
+          type: string
+          nullable: true
+          example: "507f1f77bcf86cd799439012"
+        assignedDriver:
+          type: string
+          example: "507f1f77bcf86cd799439013"
+        startPoint:
+          type: string
+          example: "Casablanca, Morocco"
+        destinationPoint:
+          type: string
+          example: "Marrakech, Morocco"
+        departureDate:
+          type: string
+          format: date-time
+          example: "2024-01-15T08:00:00Z"
+        expectedArrivalDate:
+          type: string
+          format: date-time
+          example: "2024-01-15T14:00:00Z"
+        mileageAtDeparture:
+          type: number
+          example: 150000
+        driverRemarks:
+          type: string
+          example: "Road conditions good"
+
+    TripUpdate:
+      type: object
+      properties:
+        assignedTruck:
+          type: string
+          example: "507f1f77bcf86cd799439011"
+        assignedTrailer:
+          type: string
+          example: "507f1f77bcf86cd799439012"
+        assignedDriver:
+          type: string
+          example: "507f1f77bcf86cd799439013"
+        startPoint:
+          type: string
+          example: "Casablanca, Morocco"
+        destinationPoint:
+          type: string
+          example: "Agadir, Morocco"
+        departureDate:
+          type: string
+          format: date-time
+          example: "2024-01-15T08:00:00Z"
+        expectedArrivalDate:
+          type: string
+          format: date-time
+          example: "2024-01-15T16:00:00Z"
+        actualArrivalDate:
+          type: string
+          format: date-time
+          example: "2024-01-15T16:30:00Z"
+        status:
+          type: string
+          enum: [À faire, En cours, Terminé]
+          example: "Terminé"
+        mileageAtDeparture:
+          type: number
+          example: 150000
+        mileageAtArrival:
+          type: number
+          example: 150420
+        driverRemarks:
+          type: string
+          example: "Trip completed successfully"
+
+    TripStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [À faire, En cours, Terminé]
+          example: "En cours"
+        actualArrivalDate:
+          type: string
+          format: date-time
+          description: Required when status is changed to Terminé
+          example: "2024-01-15T14:30:00Z"
+        mileageAtArrival:
+          type: number
+          description: Required when status is changed to Terminé
+          example: 150240
+
+    TripStats:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 150
+        aFaire:
+          type: integer
+          example: 30
+        enCours:
+          type: integer
+          example: 50
+        termine:
+          type: integer
+          example: 70
+        totalDistance:
+          type: number
+          description: Total distance covered (km)
+          example: 125000
+        averageDistance:
+          type: number
+          description: Average distance per trip (km)
+          example: 833.33

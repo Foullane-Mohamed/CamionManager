@@ -1,0 +1,508 @@
+/maintenances:
+  get:
+    tags:
+      - Maintenance
+    summary: Get all maintenance records
+    description: Retrieve a list of all maintenance records with optional filters (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: maintenanceType
+        schema:
+          type: string
+          enum: [Tire Replacement, Oil Change, Vehicle Revision, Other]
+        description: Filter by maintenance type
+      - in: query
+        name: linkedVehicle
+        schema:
+          type: string
+        description: Filter by vehicle ID
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum: [Scheduled, In Progress, Completed, Cancelled]
+        description: Filter by maintenance status
+      - in: query
+        name: isAlertTriggered
+        schema:
+          type: boolean
+        description: Filter by alert-triggered maintenances
+      - in: query
+        name: startDate
+        schema:
+          type: string
+          format: date
+        description: Filter maintenance records from this date
+      - in: query
+        name: endDate
+        schema:
+          type: string
+          format: date
+        description: Filter maintenance records until this date
+    responses:
+      "200":
+        description: List of maintenance records retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Maintenance"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+  post:
+    tags:
+      - Maintenance
+    summary: Create a new maintenance record
+    description: Add a new maintenance record (Admin only)
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MaintenanceInput"
+    responses:
+      "201":
+        description: Maintenance record created successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Maintenance"
+      "400":
+        description: Invalid input data (e.g., vehicle not found, mileage issues)
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Error"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/stats:
+  get:
+    tags:
+      - Maintenance
+    summary: Get maintenance statistics
+    description: Get aggregated statistics about maintenance records (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: startDate
+        schema:
+          type: string
+          format: date
+        description: Start date for statistics period
+      - in: query
+        name: endDate
+        schema:
+          type: string
+          format: date
+        description: End date for statistics period
+    responses:
+      "200":
+        description: Maintenance statistics retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MaintenanceStats"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/vehicle/{vehicleId}:
+  get:
+    tags:
+      - Maintenance
+    summary: Get maintenance records by vehicle
+    description: Retrieve all maintenance records for a specific vehicle (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: vehicleId
+        required: true
+        schema:
+          type: string
+        description: Vehicle (Truck) ID
+    responses:
+      "200":
+        description: List of maintenance records for the specified vehicle
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Maintenance"
+      "404":
+        description: Vehicle not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/{id}:
+  get:
+    tags:
+      - Maintenance
+    summary: Get maintenance record by ID
+    description: Retrieve a specific maintenance record's details (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Maintenance record ID
+    responses:
+      "200":
+        description: Maintenance record retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Maintenance"
+      "404":
+        description: Maintenance record not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Error"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+  put:
+    tags:
+      - Maintenance
+    summary: Update maintenance record
+    description: Update a maintenance record's information (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Maintenance record ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MaintenanceUpdate"
+    responses:
+      "200":
+        description: Maintenance record updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Maintenance"
+      "400":
+        description: Invalid input data
+      "404":
+        description: Maintenance record not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+  delete:
+    tags:
+      - Maintenance
+    summary: Delete maintenance record
+    description: Delete a maintenance record (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Maintenance record ID
+    responses:
+      "200":
+        description: Maintenance record deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Maintenance record deleted successfully"
+      "404":
+        description: Maintenance record not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/{id}/status:
+  patch:
+    tags:
+      - Maintenance
+    summary: Update maintenance status
+    description: Update only the status of a maintenance record (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Maintenance record ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MaintenanceStatusUpdate"
+    responses:
+      "200":
+        description: Maintenance status updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Maintenance"
+      "400":
+        description: Invalid status value
+      "404":
+        description: Maintenance record not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/alerts/all:
+  get:
+    tags:
+      - Maintenance
+    summary: Check all maintenance alerts
+    description: Check maintenance alerts for all vehicles based on active rules (Admin only)
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: Maintenance alerts retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/MaintenanceAlert"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/alerts/vehicle/{vehicleId}:
+  get:
+    tags:
+      - Maintenance
+    summary: Check maintenance alerts for a vehicle
+    description: Check maintenance alerts for a specific vehicle based on active rules (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: vehicleId
+        required: true
+        schema:
+          type: string
+        description: Vehicle (Truck) ID
+    responses:
+      "200":
+        description: Maintenance alerts for vehicle retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/MaintenanceAlert"
+      "404":
+        description: Vehicle not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/rules:
+  get:
+    tags:
+      - Maintenance
+    summary: Get all maintenance rules
+    description: Retrieve a list of all maintenance rules with optional filters (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: maintenanceType
+        schema:
+          type: string
+          enum: [Tire Replacement, Oil Change, Vehicle Revision]
+        description: Filter by maintenance type
+      - in: query
+        name: isActive
+        schema:
+          type: boolean
+        description: Filter by active/inactive status
+    responses:
+      "200":
+        description: List of maintenance rules retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/MaintenanceRule"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+  post:
+    tags:
+      - Maintenance
+    summary: Create a new maintenance rule
+    description: Create a new maintenance rule for automatic alert triggering (Admin only)
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MaintenanceRuleInput"
+    responses:
+      "201":
+        description: Maintenance rule created successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MaintenanceRule"
+      "400":
+        description: Invalid input data
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Error"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+/maintenances/rules/{id}:
+  get:
+    tags:
+      - Maintenance
+    summary: Get maintenance rule by ID
+    description: Retrieve a specific maintenance rule's details (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Maintenance rule ID
+    responses:
+      "200":
+        description: Maintenance rule retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MaintenanceRule"
+      "404":
+        description: Maintenance rule not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Error"
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+  put:
+    tags:
+      - Maintenance
+    summary: Update maintenance rule
+    description: Update a maintenance rule's information (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Maintenance rule ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MaintenanceRuleUpdate"
+    responses:
+      "200":
+        description: Maintenance rule updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MaintenanceRule"
+      "400":
+        description: Invalid input data
+      "404":
+        description: Maintenance rule not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required
+
+  delete:
+    tags:
+      - Maintenance
+    summary: Delete maintenance rule
+    description: Delete a maintenance rule (Admin only)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Maintenance rule ID
+    responses:
+      "200":
+        description: Maintenance rule deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Maintenance rule deleted successfully"
+      "404":
+        description: Maintenance rule not found
+      "401":
+        description: Unauthorized
+      "403":
+        description: Forbidden - Admin role required

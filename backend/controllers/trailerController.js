@@ -43,8 +43,6 @@ export const getAllTrailers = async (req, res) => {
     const filters = {
       status: req.query.status,
       type: req.query.type,
-      minLoad: req.query.minLoad,
-      maxLoad: req.query.maxLoad,
     };
 
     const trailers = await trailerService.getAllTrailers(filters);
@@ -101,10 +99,10 @@ export const updateTrailer = async (req, res) => {
       req.body.matricule &&
       req.body.matricule !== existingTrailer.matricule
     ) {
-      const duplicateTrailer = await trailerService.getTrailerByMatricule(
+      const matriculeExists = await trailerService.getTrailerByMatricule(
         req.body.matricule
       );
-      if (duplicateTrailer) {
+      if (matriculeExists) {
         return res.status(400).json({
           message: "A trailer with this matricule already exists",
         });
@@ -161,9 +159,8 @@ export const updateTrailerStatus = async (req, res) => {
 
 export const deleteTrailer = async (req, res) => {
   try {
-    const trailer = await trailerService.getTrailerById(req.params.id);
-
-    if (!trailer) {
+    const existingTrailer = await trailerService.getTrailerById(req.params.id);
+    if (!existingTrailer) {
       return res.status(404).json({
         message: "Trailer not found",
       });
