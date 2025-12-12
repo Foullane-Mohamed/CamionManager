@@ -1,0 +1,114 @@
+components:
+  schemas:
+    MaintenanceRule:
+      type: object
+      required:
+        - maintenanceType
+        - createdBy
+      properties:
+        _id:
+          type: string
+          description: Auto-generated MongoDB ID
+          example: "507f1f77bcf86cd799439011"
+        maintenanceType:
+          type: string
+          enum: [Tire Replacement, Oil Change, Vehicle Revision]
+          description: Type of maintenance this rule applies to
+          example: "Oil Change"
+        mileageThreshold:
+          type: number
+          minimum: 0
+          description: Mileage interval for maintenance in km (required for Oil Change and Vehicle Revision)
+          example: 10000
+        timeThresholdDays:
+          type: number
+          minimum: 0
+          description: Time interval in days (required for Oil Change)
+          example: 180
+        description:
+          type: string
+          description: Description of the maintenance rule
+          example: "Oil change every 10,000 km or 6 months, whichever comes first"
+        isActive:
+          type: boolean
+          default: true
+          description: Whether this rule is currently active and should trigger alerts
+          example: true
+        createdBy:
+          type: string
+          description: ID of user who created the rule
+          example: "507f1f77bcf86cd799439012"
+        lastModifiedBy:
+          type: string
+          description: ID of user who last modified the rule
+          example: "507f1f77bcf86cd799439013"
+        ruleSummary:
+          type: string
+          readOnly: true
+          description: Virtual field - human-readable rule summary
+          example: "Oil Change: Every 10000 km or 180 days"
+        createdAt:
+          type: string
+          format: date-time
+          description: Rule creation timestamp
+          example: "2024-01-15T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2024-01-20T14:30:00Z"
+
+    MaintenanceRuleInput:
+      type: object
+      required:
+        - maintenanceType
+      properties:
+        maintenanceType:
+          type: string
+          enum: [Tire Replacement, Oil Change, Vehicle Revision]
+          description: |
+            - **Tire Replacement**: No thresholds required
+            - **Oil Change**: Both mileage and time thresholds required
+            - **Vehicle Revision**: Only mileage threshold required
+          example: "Oil Change"
+        mileageThreshold:
+          type: number
+          minimum: 0
+          description: Required for Oil Change and Vehicle Revision
+          example: 10000
+        timeThresholdDays:
+          type: number
+          minimum: 0
+          description: Required for Oil Change
+          example: 180
+        description:
+          type: string
+          description: Optional description of the rule
+          example: "Oil change every 10,000 km or 6 months"
+        isActive:
+          type: boolean
+          default: true
+          description: Set to false to temporarily disable the rule
+          example: true
+
+    MaintenanceRuleUpdate:
+      type: object
+      properties:
+        maintenanceType:
+          type: string
+          enum: [Tire Replacement, Oil Change, Vehicle Revision]
+          example: "Vehicle Revision"
+        mileageThreshold:
+          type: number
+          minimum: 0
+          example: 15000
+        timeThresholdDays:
+          type: number
+          minimum: 0
+          example: 365
+        description:
+          type: string
+          example: "Updated maintenance rule description"
+        isActive:
+          type: boolean
+          example: false
