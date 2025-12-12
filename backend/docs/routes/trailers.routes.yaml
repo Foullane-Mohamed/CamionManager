@@ -1,4 +1,4 @@
-/trailers:
+/api/trailers:
   get:
     tags:
       - Trailers
@@ -62,7 +62,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trailers/stats:
+/api/trailers/stats:
   get:
     tags:
       - Trailers
@@ -82,7 +82,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trailers/available:
+/api/trailers/available:
   get:
     tags:
       - Trailers
@@ -102,7 +102,7 @@
       "401":
         description: Unauthorized
 
-/trailers/{id}:
+/api/trailers/{id}:
   get:
     tags:
       - Trailers
@@ -201,7 +201,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trailers/{id}/status:
+/api/trailers/{id}/status:
   patch:
     tags:
       - Trailers

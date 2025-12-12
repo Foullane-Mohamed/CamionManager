@@ -1,4 +1,4 @@
-/maintenances:
+/api/maintenances:
   get:
     tags:
       - Maintenance
@@ -86,7 +86,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/stats:
+/api/maintenances/stats:
   get:
     tags:
       - Maintenance
@@ -119,7 +119,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/vehicle/{vehicleId}:
+/api/maintenances/vehicle/{vehicleId}:
   get:
     tags:
       - Maintenance
@@ -150,7 +150,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/{id}:
+/api/maintenances/{id}:
   get:
     tags:
       - Maintenance
@@ -251,7 +251,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/{id}/status:
+/api/maintenances/{id}/status:
   patch:
     tags:
       - Maintenance
@@ -288,7 +288,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/alerts/all:
+/api/maintenances/alerts/all:
   get:
     tags:
       - Maintenance
@@ -310,7 +310,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/alerts/vehicle/{vehicleId}:
+/api/maintenances/alerts/vehicle/{vehicleId}:
   get:
     tags:
       - Maintenance
@@ -341,7 +341,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/rules:
+/api/maintenances/rules:
   get:
     tags:
       - Maintenance
@@ -406,7 +406,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/maintenances/rules/{id}:
+/api/maintenances/rules/{id}:
   get:
     tags:
       - Maintenance

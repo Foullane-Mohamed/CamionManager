@@ -1,4 +1,4 @@
-/trips:
+/api/trips:
   get:
     tags:
       - Trips
@@ -68,7 +68,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trips/stats:
+/api/trips/stats:
   get:
     tags:
       - Trips
@@ -101,7 +101,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trips/status/{status}:
+/api/trips/status/{status}:
   get:
     tags:
       - Trips
@@ -129,7 +129,7 @@
       "401":
         description: Unauthorized
 
-/trips/driver/{driverId}:
+/api/trips/driver/{driverId}:
   get:
     tags:
       - Trips
@@ -158,7 +158,7 @@
       "401":
         description: Unauthorized
 
-/trips/truck/{truckId}:
+/api/trips/truck/{truckId}:
   get:
     tags:
       - Trips
@@ -187,7 +187,7 @@
       "401":
         description: Unauthorized
 
-/trips/{id}:
+/api/trips/{id}:
   get:
     tags:
       - Trips
@@ -286,7 +286,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trips/{id}/status:
+/api/trips/{id}/status:
   patch:
     tags:
       - Trips
@@ -323,7 +323,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trips/{id}/pdf:
+/api/trips/{id}/pdf:
   get:
     tags:
       - Trips

@@ -1,4 +1,4 @@
-/users/admin:
+/api/users/admin:
   post:
     tags:
       - Users
@@ -47,7 +47,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/users:
+/api/users:
   get:
     tags:
       - Users
@@ -82,7 +82,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/users/pending:
+/api/users/pending:
   get:
     tags:
       - Users
@@ -104,7 +104,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/users/{id}:
+/api/users/{id}:
   get:
     tags:
       - Users
@@ -169,7 +169,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/users/{id}/approve:
+/api/users/{id}/approve:
   put:
     tags:
       - Users

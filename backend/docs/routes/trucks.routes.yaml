@@ -1,4 +1,4 @@
-/trucks:
+/api/trucks:
   get:
     tags:
       - Trucks
@@ -67,7 +67,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trucks/stats:
+/api/trucks/stats:
   get:
     tags:
       - Trucks
@@ -87,7 +87,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trucks/available:
+/api/trucks/available:
   get:
     tags:
       - Trucks
@@ -107,7 +107,7 @@
       "401":
         description: Unauthorized
 
-/trucks/{id}:
+/api/trucks/{id}:
   get:
     tags:
       - Trucks
@@ -206,7 +206,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/trucks/{id}/status:
+/api/trucks/{id}/status:
   patch:
     tags:
       - Trucks

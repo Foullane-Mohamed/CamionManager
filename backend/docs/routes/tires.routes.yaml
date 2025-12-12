@@ -1,4 +1,4 @@
-/tires:
+/api/tires:
   get:
     tags:
       - Tires
@@ -67,7 +67,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/tires/stats:
+/api/tires/stats:
   get:
     tags:
       - Tires
@@ -87,7 +87,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/tires/status/{status}:
+/api/tires/status/{status}:
   get:
     tags:
       - Tires
@@ -115,7 +115,7 @@
       "401":
         description: Unauthorized
 
-/tires/vehicle/{vehicleType}/{vehicleId}:
+/api/tires/vehicle/{vehicleType}/{vehicleId}:
   get:
     tags:
       - Tires
@@ -151,7 +151,7 @@
       "401":
         description: Unauthorized
 
-/tires/{id}:
+/api/tires/{id}:
   get:
     tags:
       - Tires
@@ -250,7 +250,7 @@
       "403":
         description: Forbidden - Admin role required
 
-/tires/{id}/status:
+/api/tires/{id}/status:
   patch:
     tags:
       - Tires

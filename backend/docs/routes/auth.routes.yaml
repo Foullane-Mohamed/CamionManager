@@ -1,4 +1,4 @@
-/auth/register:
+/api/auth/register:
   post:
     tags:
       - Auth
@@ -7,8 +7,7 @@
       Create a new user account. 
       - **Admin accounts** are automatically approved
       - **Chauffeur accounts** require admin approval (status starts as "pending")
-      - Chauffeurs must provide additional information (phone, nationalId, licenseNumber, etc.)
-    security: []
+      - Chauffeurs must provide additional information (phone, nationalId, licenseNumber, etc.)    security: []
     requestBody:
       required: true
       content:
@@ -26,15 +25,15 @@
             chauffeur:
               summary: Chauffeur registration
               value:
-                name: "John Driver"
-                email: "john.driver@example.com"
-                password: "driver123"
-                role: "chauffeur"
-                phoneNumber: "1234567890"
-                nationalId: "NAT123456"
-                licenseNumber: "LIC789012"
+                name: "Mohamed"
+                email: "mohamed@example.com"
+                password: "Test@1234"
+                phoneNumber: "2343345434"
+                nationalId: "234234"
+                licenseNumber: "678908"
                 licenseType: "C"
-                address: "123 Main Street, City, Country"
+                address: "khdkfjdskf"
+                dateOfBirth: "2000-02-02"
     responses:
       "201":
         description: User registered successfully
@@ -55,7 +54,7 @@
             schema:
               $ref: "#/components/schemas/Error"
 
-/auth/login:
+/api/auth/login:
   post:
     tags:
       - Auth
@@ -101,7 +100,7 @@
                 value:
                   message: "Your account has been rejected"
 
-/auth/refresh:
+/api/auth/refresh:
   post:
     tags:
       - Auth
@@ -138,7 +137,7 @@
             schema:
               $ref: "#/components/schemas/Error"
 
-/auth/logout:
+/api/auth/logout:
   post:
     tags:
       - Auth
@@ -164,7 +163,7 @@
             schema:
               $ref: "#/components/schemas/Error"
 
-/auth/profile:
+/api/auth/profile:
   get:
     tags:
       - Auth
