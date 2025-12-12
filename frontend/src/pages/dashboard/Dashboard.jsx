@@ -1,87 +1,108 @@
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import {
+  Truck,
+  Container,
+  Route,
+  Droplet,
+  Wrench,
+  CircleDot,
+  Users,
+  LayoutDashboard,
+} from "lucide-react";
 
 const Dashboard = () => {
   const { user, userRole } = useAuth();
-
   const cards = [
     {
       name: "Trucks",
       href: "/trucks",
-      icon: "🚛",
-      color: "bg-blue-500",
+      icon: Truck,
+      color: "from-blue-500 to-cyan-500",
       roles: ["admin", "chauffeur"],
     },
     {
       name: "Trailers",
       href: "/trailers",
-      icon: "🚚",
-      color: "bg-green-500",
+      icon: Container,
+      color: "from-emerald-500 to-teal-500",
       roles: ["admin", "chauffeur"],
     },
     {
       name: "Trips",
       href: "/trips",
-      icon: "📍",
-      color: "bg-yellow-500",
+      icon: Route,
+      color: "from-purple-500 to-indigo-500",
       roles: ["admin", "chauffeur"],
     },
     {
       name: "Fuel Records",
       href: "/fuels",
-      icon: "⛽",
-      color: "bg-red-500",
+      icon: Droplet,
+      color: "from-blue-500 to-indigo-500",
       roles: ["admin", "chauffeur"],
     },
     {
       name: "Maintenance",
       href: "/maintenances",
-      icon: "🔧",
-      color: "bg-purple-500",
+      icon: Wrench,
+      color: "from-orange-500 to-amber-500",
       roles: ["admin", "chauffeur"],
     },
     {
       name: "Tires",
       href: "/tires",
-      icon: "⚙️",
-      color: "bg-indigo-500",
+      icon: CircleDot,
+      color: "from-gray-500 to-slate-500",
       roles: ["admin", "chauffeur"],
     },
     {
       name: "Users",
       href: "/users",
-      icon: "👥",
-      color: "bg-pink-500",
+      icon: Users,
+      color: "from-pink-500 to-rose-500",
       roles: ["admin"],
     },
   ];
 
   const filteredCards = cards.filter((card) => card.roles.includes(userRole));
-
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">Welcome back, {user?.name}!</p>
-      </div>{" "}
+      <div className="mb-8 flex items-center gap-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg">
+          <LayoutDashboard className="w-8 h-8 text-white" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Dashboard
+          </h1>
+      
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredCards.map((card) => (
-          <Link
-            key={card.name}
-            to={card.href}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-          >
-            <div
-              className={`${card.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}
+        {filteredCards.map((card) => {
+          const IconComponent = card.icon;
+          return (
+            <Link
+              key={card.name}
+              to={card.href}
+              className="bg-white dark:bg-gray-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-200 p-6 border border-gray-200 dark:border-gray-800 group hover:border-blue-500 dark:hover:border-blue-400"
             >
-              <span className="text-2xl">{card.icon}</span>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">{card.name}</h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage {card.name.toLowerCase()}
-            </p>
-          </Link>
-        ))}
+              <div
+                className={`bg-gradient-to-br ${card.color} dark:${card.color} w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg`}
+              >
+                <IconComponent className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                {card.name}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Manage {card.name.toLowerCase()}
+              </p>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

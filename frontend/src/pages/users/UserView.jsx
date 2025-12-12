@@ -2,6 +2,19 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { userService } from "../../services/user.service";
 import { useApp } from "../../context/AppContext";
+import {
+  User,
+  ArrowLeft,
+  Mail,
+  Shield,
+  Car,
+  Check,
+  Clock,
+  X,
+  Loader2,
+  Phone,
+  Calendar,
+} from "lucide-react";
 
 const UserView = () => {
   const { id } = useParams();
@@ -28,145 +41,163 @@ const UserView = () => {
 
   const getStatusBadge = (status) => {
     const styles = {
-      approved: "bg-green-100 text-green-800",
-      pending: "bg-yellow-100 text-yellow-800",
-      rejected: "bg-red-100 text-red-800",
+      approved: {
+        bg: "bg-green-100 dark:bg-green-900/30",
+        text: "text-green-800 dark:text-green-300",
+        icon: Check,
+      },
+      pending: {
+        bg: "bg-yellow-100 dark:bg-yellow-900/30",
+        text: "text-yellow-800 dark:text-yellow-300",
+        icon: Clock,
+      },
+      rejected: {
+        bg: "bg-red-100 dark:bg-red-900/30",
+        text: "text-red-800 dark:text-red-300",
+        icon: X,
+      },
     };
+
+    const config = styles[status] || styles["pending"];
+    const IconComponent = config.icon;
+
     return (
       <span
-        className={`px-3 py-1 text-sm font-semibold rounded-full ${styles[status]}`}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-full ${config.bg} ${config.text}`}
       >
+        <IconComponent className="w-4 h-4" />
         {status}
       </span>
     );
   };
 
   const getRoleBadge = (role) => {
-    const styles = {
-      admin: "bg-purple-100 text-purple-800",
-      chauffeur: "bg-blue-100 text-blue-800",
-    };
+    if (role === "admin") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
+          <Shield className="w-4 h-4" />
+          Admin
+        </span>
+      );
+    }
     return (
-      <span
-        className={`px-3 py-1 text-sm font-semibold rounded-full ${styles[role]}`}
-      >
-        {role}
+      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+        <Car className="w-4 h-4" />
+        Chauffeur
       </span>
     );
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Loading...</div>
+        <Loader2 className="w-12 h-12 animate-spin text-pink-600 dark:text-pink-400" />
       </div>
     );
-  if (!user)
+  }
+
+  if (!user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">User not found</p>
+      <div className="flex flex-col items-center justify-center h-64">
+        <User className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
+        <p className="text-gray-500 dark:text-gray-400">User not found</p>
       </div>
     );
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">User Details</h1>
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-rose-600 dark:from-pink-500 dark:to-rose-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <User className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              User Details
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {user.name}
+            </p>
+          </div>
+        </div>
         <Link
           to="/users"
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         >
-          Back to List
+          <ArrowLeft className="w-4 h-4" />
+          Back
         </Link>
       </div>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="bg-gray-50 px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">{user.name}</h2>
+
+      <div className="grid gap-6">
+        {/* Status & Role Card */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Status & Role
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            {getStatusBadge(user.status)}
+            {getRoleBadge(user.role)}
+          </div>
         </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">
-                Name
-              </label>
-              <p className="text-lg text-gray-900">{user.name}</p>
+
+        {/* Basic Information */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <User className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+            Basic Information
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <User className="w-5 h-5 text-pink-600 dark:text-pink-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
+                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                  {user.name}
+                </p>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">
-                Email
-              </label>
-              <p className="text-lg text-gray-900">{user.email}</p>
+
+            <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Mail className="w-5 h-5 text-pink-600 dark:text-pink-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Email
+                </p>
+                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                  {user.email}
+                </p>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">
-                Role
-              </label>
-              <div>{getRoleBadge(user.role)}</div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">
-                Account Status
-              </label>
-              <div>{getStatusBadge(user.accountStatus)}</div>
-            </div>
-            {user.role === "chauffeur" && (
-              <>
+
+            {user.phone && (
+              <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <Phone className="w-5 h-5 text-pink-600 dark:text-pink-400 mt-0.5" />
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    Phone Number
-                  </label>
-                  <p className="text-lg text-gray-900">
-                    {user.phoneNumber || "-"}
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Phone
+                  </p>
+                  <p className="text-lg font-medium text-gray-900 dark:text-white">
+                    {user.phone}
                   </p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    National ID
-                  </label>
-                  <p className="text-lg text-gray-900">
-                    {user.nationalId || "-"}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    License Number
-                  </label>
-                  <p className="text-lg text-gray-900">
-                    {user.licenseNumber || "-"}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    License Type
-                  </label>
-                  <p className="text-lg text-gray-900">
-                    {user.licenseType || "-"}
-                  </p>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    Address
-                  </label>
-                  <p className="text-lg text-gray-900">{user.address || "-"}</p>
-                </div>
-              </>
+              </div>
             )}
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">
-                Created At
-              </label>
-              <p className="text-lg text-gray-900">
-                {new Date(user.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">
-                Last Updated
-              </label>
-              <p className="text-lg text-gray-900">
-                {new Date(user.updatedAt).toLocaleDateString()}
-              </p>
-            </div>
+
+            {user.createdAt && (
+              <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <Calendar className="w-5 h-5 text-pink-600 dark:text-pink-400 mt-0.5" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Member Since
+                  </p>
+                  <p className="text-lg font-medium text-gray-900 dark:text-white">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

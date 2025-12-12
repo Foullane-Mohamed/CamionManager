@@ -3,6 +3,20 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { maintenanceService } from "../../services/maintenance.service";
 import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Wrench,
+  Calendar,
+  DollarSign,
+  Truck,
+  FileText,
+  Clock,
+  Settings,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 
 const MaintenanceView = () => {
   const { id } = useParams();
@@ -67,15 +81,23 @@ const MaintenanceView = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">Loading maintenance details...</p>
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 dark:border-orange-400"></div>
+          <p className="text-gray-500 dark:text-gray-400">
+            Loading maintenance details...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (!maintenance) {
     return (
-      <div className="text-center">
-        <p className="text-gray-500">Maintenance record not found</p>
+      <div className="text-center py-12">
+        <Wrench className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+        <p className="text-gray-500 dark:text-gray-400">
+          Maintenance record not found
+        </p>
       </div>
     );
   }
@@ -83,27 +105,42 @@ const MaintenanceView = () => {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Maintenance Details</h1>
-        <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 dark:from-orange-600 dark:to-amber-700 rounded-xl flex items-center justify-center shadow-lg">
+            <Wrench className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Maintenance Details
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {maintenance.maintenanceNumber || "View maintenance record"}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-3 flex-wrap">
           <Link
             to="/maintenances"
-            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-2"
           >
+            <ArrowLeft className="w-4 h-4" />
             Back to List
           </Link>
           {userRole === "admin" && (
             <>
               <Link
                 to={`/maintenances/${id}/edit`}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="px-4 py-2 bg-orange-600 dark:bg-orange-700 text-white rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors flex items-center gap-2 shadow-md"
               >
+                <Edit className="w-4 h-4" />
                 Edit
               </Link>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors flex items-center gap-2 shadow-md"
               >
+                <Trash2 className="w-4 h-4" />
                 Delete
               </button>
             </>
@@ -112,179 +149,115 @@ const MaintenanceView = () => {
       </div>
 
       {/* Maintenance Information */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Maintenance Information</h2>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 p-6 mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Maintenance Information
+          </h2>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p className="text-sm text-gray-500">Maintenance Number</p>
-            <p className="text-lg font-medium">
-              {maintenance.maintenanceNumber}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-500">Type</p>
-            <p className="text-lg font-medium">{maintenance.maintenanceType}</p>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-500">Status</p>
-            <span
-              className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(
-                maintenance.status
-              )}`}
-            >
-              {maintenance.status}
-            </span>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-500">Maintenance Date</p>
-            <p className="text-lg font-medium">
-              {new Date(maintenance.maintenanceDate).toLocaleString()}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-500">Vehicle</p>
-            <p className="text-lg font-medium">
-              {maintenance.linkedVehicle?.matricule || "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-500">Vehicle Mileage</p>
-            <p className="text-lg font-medium">
-              {maintenance.vehicleMileageAtMaintenance?.toLocaleString()} km
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-500">Cost</p>
-            <p className="text-lg font-medium text-green-600">
-              ${maintenance.cost?.toFixed(2)}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-500">Service Provider</p>
-            <p className="text-lg font-medium">{maintenance.serviceProvider}</p>
-          </div>
-
-          {maintenance.nextMaintenanceDueDate && (
+          <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400 mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500">Next Maintenance Due Date</p>
-              <p className="text-lg font-medium">
-                {new Date(
-                  maintenance.nextMaintenanceDueDate
-                ).toLocaleDateString()}
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Maintenance Number
+              </p>
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
+                {maintenance.maintenanceNumber}
               </p>
             </div>
-          )}
-
-          {maintenance.nextMaintenanceDueMileage && (
+          </div>
+          <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500">
-                Next Maintenance Due Mileage
-              </p>
-              <p className="text-lg font-medium">
-                {maintenance.nextMaintenanceDueMileage?.toLocaleString()} km
+              <p className="text-sm text-gray-500 dark:text-gray-400">Date</p>
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
+                {new Date(maintenance.date).toLocaleString()}
               </p>
             </div>
-          )}
-
-          {maintenance.isAlertTriggered && (
+          </div>{" "}
+          <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Settings className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500">Alert Type</p>
-              <p className="text-lg font-medium">{maintenance.alertType}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Type</p>
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
+                {maintenance.type}
+              </p>
             </div>
-          )}
-
-          <div>
-            <p className="text-sm text-gray-500">Performed By</p>
-            <p className="text-lg font-medium">
-              {maintenance.performedBy?.name || "N/A"}
-            </p>
+          </div>
+          <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Vehicle
+              </p>
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
+                {maintenance.linkedTruck?.matricule || "N/A"}
+              </p>
+            </div>
           </div>
         </div>
-
-        {maintenance.description && (
-          <div className="mt-6">
-            <p className="text-sm text-gray-500 mb-2">Description</p>
-            <p className="text-base bg-gray-50 p-4 rounded-md">
-              {maintenance.description}
-            </p>
-          </div>
-        )}
-
-        {maintenance.remarks && (
-          <div className="mt-4">
-            <p className="text-sm text-gray-500 mb-2">Remarks</p>
-            <p className="text-base bg-gray-50 p-4 rounded-md">
-              {maintenance.remarks}
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* Parts Replaced */}
-      {maintenance.partsReplaced && maintenance.partsReplaced.length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Parts Replaced</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Part Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Quantity
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Unit Price
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Total
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {maintenance.partsReplaced.map((part, index) => (
-                  <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {part.partName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {part.quantity}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${part.unitPrice?.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ${(part.quantity * part.unitPrice).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Cost Information */}
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 p-6 mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Cost Information
+          </h2>
+        </div>
+        <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 rounded-xl border border-green-200 dark:border-green-800">
+          <DollarSign className="w-8 h-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            Total Cost
+          </p>
+          <p className="text-3xl font-bold text-green-700 dark:text-green-400">
+            ${maintenance.cost?.toFixed(2)}
+          </p>
+        </div>
+      </div>
+
+      {/* Description */}
+      {maintenance.description && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <FileText className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Description
+            </h2>
           </div>
+          <p className="text-base text-gray-700 dark:text-gray-300 bg-amber-50 dark:bg-amber-950 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+            {maintenance.description}
+          </p>
         </div>
       )}
 
       {/* Metadata */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Record Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">Created At</p>
-            <p className="text-base">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Record Information
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Created At
+            </p>
+            <p className="text-base font-medium text-gray-900 dark:text-white">
               {new Date(maintenance.createdAt).toLocaleString()}
             </p>
           </div>
-          <div>
-            <p className="text-sm text-gray-500">Last Updated</p>
-            <p className="text-base">
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Last Updated
+            </p>
+            <p className="text-base font-medium text-gray-900 dark:text-white">
               {new Date(maintenance.updatedAt).toLocaleString()}
             </p>
           </div>

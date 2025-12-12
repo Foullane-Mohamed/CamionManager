@@ -3,6 +3,19 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { tireService } from "../../services/tire.service";
 import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
+import {
+  CircleDot,
+  ArrowLeft,
+  Pencil,
+  Trash2,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  Truck,
+  Calendar,
+  Loader2,
+  Package,
+} from "lucide-react";
 
 const TireView = () => {
   const { id } = useParams();
@@ -47,59 +60,93 @@ const TireView = () => {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Bon":
-        return "bg-green-100 text-green-800";
-      case "À remplacer":
-        return "bg-yellow-100 text-yellow-800";
-      case "Usé":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+  const getStatusBadge = (status) => {
+    const styles = {
+      Bon: {
+        bg: "bg-green-100 dark:bg-green-900/30",
+        text: "text-green-800 dark:text-green-300",
+        icon: CheckCircle,
+      },
+      "À remplacer": {
+        bg: "bg-yellow-100 dark:bg-yellow-900/30",
+        text: "text-yellow-800 dark:text-yellow-300",
+        icon: AlertTriangle,
+      },
+      Usé: {
+        bg: "bg-red-100 dark:bg-red-900/30",
+        text: "text-red-800 dark:text-red-300",
+        icon: XCircle,
+      },
+    };
+
+    const config = styles[status] || styles["Bon"];
+    const IconComponent = config.icon;
+
+    return (
+      <span
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-full ${config.bg} ${config.text}`}
+      >
+        <IconComponent className="w-4 h-4" />
+        {status}
+      </span>
+    );
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">Loading tire details...</p>
+        <Loader2 className="w-12 h-12 animate-spin text-gray-600 dark:text-gray-400" />
       </div>
     );
   }
 
   if (!tire) {
     return (
-      <div className="text-center">
-        <p className="text-gray-500">Tire not found</p>
+      <div className="flex flex-col items-center justify-center h-64">
+        <CircleDot className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
+        <p className="text-gray-500 dark:text-gray-400">Tire not found</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Tire Details</h1>
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-slate-600 dark:from-gray-500 dark:to-slate-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <CircleDot className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Tire Details
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Serial: {tire.serialNumber}
+            </p>
+          </div>
+        </div>
         <div className="flex gap-3">
           <Link
             to="/tires"
-            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
-            Back to List
+            <ArrowLeft className="w-4 h-4" />
+            Back
           </Link>
           {userRole === "admin" && (
             <>
               <Link
                 to={`/tires/${id}/edit`}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
               >
+                <Pencil className="w-4 h-4" />
                 Edit
               </Link>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 dark:bg-red-500 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
               >
+                <Trash2 className="w-4 h-4" />
                 Delete
               </button>
             </>
@@ -107,72 +154,115 @@ const TireView = () => {
         </div>
       </div>
 
-      {/* Tire Information */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Tire Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p className="text-sm text-gray-500">Serial Number</p>
-            <p className="text-lg font-medium">{tire.serialNumber}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Status</p>
-            <span
-              className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(
-                tire.status
-              )}`}
-            >
-              {tire.status}
-            </span>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Brand</p>
-            <p className="text-lg font-medium">{tire.brand}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Size</p>
-            <p className="text-lg font-medium">{tire.size}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Installation Date</p>
-            <p className="text-lg font-medium">
-              {new Date(tire.installationDate).toLocaleDateString()}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Vehicle Position</p>
-            <p className="text-lg font-medium">{tire.vehiclePosition}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Associated Vehicle Type</p>
-            <p className="text-lg font-medium">{tire.associatedVehicleType}</p>
-          </div>{" "}
-          <div>
-            <p className="text-sm text-gray-500">Associated Vehicle ID</p>
-            <p className="text-sm font-medium font-mono">
-              {tire.associatedVehicleId}
-            </p>
+      <div className="grid gap-6">
+        {/* Status Card */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Status
+          </h2>
+          <div className="flex items-center gap-3">
+            {getStatusBadge(tire.status)}
           </div>
         </div>
-      </div>
 
-      {/* Metadata */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Record Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">Created At</p>
-            <p className="text-base">
-              {new Date(tire.createdAt).toLocaleString()}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Last Updated</p>
-            <p className="text-base">
-              {new Date(tire.updatedAt).toLocaleString()}
-            </p>
+        {/* Tire Information */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <Package className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            Tire Information
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <CircleDot className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Serial Number
+                </p>
+                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                  {tire.serialNumber}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Package className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Brand
+                </p>
+                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                  {tire.brand}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Package className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Size</p>
+                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                  {tire.size}
+                </p>
+              </div>
+            </div>
+
+            {tire.vehiclePosition && (
+              <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <Package className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Position
+                  </p>
+                  <p className="text-lg font-medium text-gray-900 dark:text-white">
+                    {tire.vehiclePosition}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Vehicle Information */}
+        {tire.linkedVehicle && (
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              Linked Vehicle
+            </h2>
+            <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Vehicle Matricule
+                </p>
+                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                  {tire.linkedVehicle.matricule}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Installation Date */}
+        {tire.installationDate && (
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              Installation Date
+            </h2>
+            <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Installed On
+                </p>
+                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                  {new Date(tire.installationDate).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

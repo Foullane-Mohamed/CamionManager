@@ -9,9 +9,8 @@ const Layout = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
-
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
       {/* Header */}
       <Header toggleSidebar={toggleSidebar} />
 
@@ -19,7 +18,7 @@ const Layout = () => {
       <Sidebar isOpen={sidebarOpen} closeSidebar={closeSidebar} />
 
       {/* Main Content */}
-      <main className="flex-1 pt-16 lg:pl-64">
+      <main className="flex-1 pt-16 lg:pl-64 transition-all duration-300">
         <div className="container mx-auto px-4 py-6">
           <Outlet />
         </div>

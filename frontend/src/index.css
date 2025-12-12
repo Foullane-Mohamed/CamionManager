@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@theme {
+  --color-gray-850: #1e293b;
+  --color-gray-950: #0f172a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+.dark {
+  color-scheme: dark;
+}

@@ -8,6 +8,18 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import {
+  Wrench,
+  Save,
+  X,
+  Loader2,
+  Calendar,
+  Truck,
+  DollarSign,
+  FileText,
+  Settings,
+  AlertCircle,
+} from "lucide-react";
 
 const MaintenanceCreate = () => {
   const { user } = useAuth();
@@ -77,231 +89,203 @@ const MaintenanceCreate = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">Loading vehicles...</p>
+        <Loader2 className="w-12 h-12 animate-spin text-orange-600 dark:text-orange-400" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Add Maintenance Record</h1>
+    <div className="max-w-3xl mx-auto">
+      <div className="mb-8 flex items-center gap-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-amber-600 dark:from-orange-500 dark:to-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
+          <Wrench className="w-8 h-8 text-white" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Add Maintenance Record
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Record a new maintenance operation
+          </p>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-4">
-            Maintenance Information
-          </h2>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800 space-y-6"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label
+              htmlFor="maintenanceDate"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <Calendar className="w-4 h-4" />
+              Maintenance Date *
+            </label>
+            <input
+              id="maintenanceDate"
+              type="date"
+              {...register("maintenanceDate")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            />
+            {errors.maintenanceDate && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.maintenanceDate.message}
+              </p>
+            )}
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Maintenance Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Maintenance Type *
-              </label>
-              <select
-                {...register("maintenanceType")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="Oil Change">Oil Change</option>
-                <option value="Tire Replacement">Tire Replacement</option>
-                <option value="Vehicle Revision">Vehicle Revision</option>
-                <option value="Other">Other</option>
-              </select>
-              {errors.maintenanceType && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.maintenanceType.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label
+              htmlFor="linkedVehicle"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <Truck className="w-4 h-4" />
+              Vehicle *
+            </label>
+            <select
+              id="linkedVehicle"
+              {...register("linkedVehicle")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            >
+              <option value="">Select vehicle</option>
+              {vehicles.map((vehicle) => (
+                <option key={vehicle._id} value={vehicle._id}>
+                  {vehicle.label}
+                </option>
+              ))}
+            </select>
+            {errors.linkedVehicle && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.linkedVehicle.message}
+              </p>
+            )}
+          </div>
 
-            {/* Linked Vehicle */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vehicle *
-              </label>
-              <select
-                {...register("linkedVehicle")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select vehicle</option>
-                {vehicles.map((vehicle) => (
-                  <option key={vehicle._id} value={vehicle._id}>
-                    {vehicle.label}
-                  </option>
-                ))}
-              </select>
-              {errors.linkedVehicle && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.linkedVehicle.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label
+              htmlFor="maintenanceType"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <Settings className="w-4 h-4" />
+              Maintenance Type *
+            </label>
+            <select
+              id="maintenanceType"
+              {...register("maintenanceType")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            >
+              <option value="Oil Change">Oil Change</option>
+              <option value="Tire Replacement">Tire Replacement</option>
+              <option value="Brake Repair">Brake Repair</option>
+              <option value="Engine Repair">Engine Repair</option>
+              <option value="Transmission Repair">Transmission Repair</option>
+              <option value="Inspection">Inspection</option>
+              <option value="Other">Other</option>
+            </select>
+            {errors.maintenanceType && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.maintenanceType.message}
+              </p>
+            )}
+          </div>
 
-            {/* Maintenance Date */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Maintenance Date *
-              </label>
-              <input
-                type="datetime-local"
-                {...register("maintenanceDate")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.maintenanceDate && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.maintenanceDate.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label
+              htmlFor="cost"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <DollarSign className="w-4 h-4" />
+              Cost *
+            </label>
+            <input
+              id="cost"
+              type="number"
+              step="0.01"
+              {...register("cost", { valueAsNumber: true })}
+              placeholder="0.00"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            />
+            {errors.cost && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.cost.message}
+              </p>
+            )}
+          </div>
 
-            {/* Vehicle Mileage */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vehicle Mileage (km) *
-              </label>
-              <input
-                type="number"
-                {...register("vehicleMileageAtMaintenance", {
-                  valueAsNumber: true,
-                })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.vehicleMileageAtMaintenance && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.vehicleMileageAtMaintenance.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label
+              htmlFor="status"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <AlertCircle className="w-4 h-4" />
+              Status *
+            </label>
+            <select
+              id="status"
+              {...register("status")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            >
+              <option value="Scheduled">Scheduled</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            {errors.status && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.status.message}
+              </p>
+            )}
+          </div>
 
-            {/* Cost */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Cost *
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("cost", { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.cost && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.cost.message}
-                </p>
-              )}
-            </div>
-
-            {/* Service Provider */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Service Provider *
-              </label>
-              <input
-                type="text"
-                {...register("serviceProvider")}
-                placeholder="Garage or service center name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.serviceProvider && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.serviceProvider.message}
-                </p>
-              )}
-            </div>
-
-            {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status *
-              </label>
-              <select
-                {...register("status")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="Scheduled">Scheduled</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-              {errors.status && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.status.message}
-                </p>
-              )}
-            </div>
-
-            {/* Next Maintenance Due Mileage */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Next Maintenance Due Mileage (km)
-              </label>
-              <input
-                type="number"
-                {...register("nextMaintenanceDueMileage", {
-                  valueAsNumber: true,
-                })}
-                placeholder="Optional"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.nextMaintenanceDueMileage && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.nextMaintenanceDueMileage.message}
-                </p>
-              )}
-            </div>
-
-            {/* Description */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <textarea
-                {...register("description")}
-                rows={3}
-                placeholder="Detailed description of maintenance work"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-
-            {/* Remarks */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Remarks
-              </label>
-              <textarea
-                {...register("remarks")}
-                rows={2}
-                placeholder="Additional notes or remarks"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.remarks && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.remarks.message}
-                </p>
-              )}
-            </div>
+          <div className="md:col-span-2">
+            <label
+              htmlFor="description"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <FileText className="w-4 h-4" />
+              Description
+            </label>
+            <textarea
+              id="description"
+              {...register("description")}
+              rows="4"
+              placeholder="Enter maintenance details..."
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            />
+            {errors.description && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.description.message}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="flex gap-4 pt-4">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-600 to-amber-600 dark:from-orange-500 dark:to-amber-500 text-white rounded-lg hover:from-orange-700 hover:to-amber-700 dark:hover:from-orange-600 dark:hover:to-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 dark:focus:ring-orange-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
           >
-            {isSubmitting ? "Creating..." : "Create Maintenance Record"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                Create Maintenance
+              </>
+            )}
           </button>
           <button
             type="button"
             onClick={() => navigate("/maintenances")}
-            className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors inline-flex items-center gap-2"
           >
+            <X className="w-5 h-5" />
             Cancel
           </button>
         </div>

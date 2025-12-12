@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+﻿import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tireSchema } from "../../validation/tire.schema";
 import { tireService } from "../../services/tire.service";
@@ -7,6 +7,7 @@ import { trailerService } from "../../services/trailer.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import { Circle, Save, X, Loader2, Calendar, Truck, Hash, Package, CheckCircle, MapPin, Tag } from "lucide-react";
 
 const TireCreate = () => {
   const navigate = useNavigate();
@@ -29,35 +30,25 @@ const TireCreate = () => {
   const vehicleType = watch("associatedVehicleType");
 
   useEffect(() => {
-    const loadVehicles = async () => {
-      try {
-        const [trucksData, trailersData] = await Promise.all([
-          truckService.getAll(),
-          trailerService.getAll(),
-        ]);
-
-        const allVehicles = [
-          ...trucksData.map((t) => ({
-            ...t,
-            type: "Truck",
-            label: `${t.matricule} (Truck)`,
-          })),
-          ...trailersData.map((t) => ({
-            ...t,
-            type: "Trailer",
-            label: `${t.matricule} (Trailer)`,
-          })),
-        ];
-
-        setVehicles(allVehicles);
-      } catch (error) {
-        toast.error("Failed to load vehicles");
-      } finally {
-        setLoading(false);
-      }
-    };
     loadVehicles();
-  }, []);
+  }, [vehicleType]);
+
+  const loadVehicles = async () => {
+    try {
+      setLoading(true);
+      if (vehicleType === "Truck") {
+        const trucks = await truckService.getAll();
+        setVehicles(trucks.map(t => ({ id: t._id, label: t.matricule })));
+      } else {
+        const trailers = await trailerService.getAll();
+        setVehicles(trailers.map(t => ({ id: t._id, label: t.matricule })));
+      }
+    } catch (error) {
+      toast.error("Failed to load vehicles");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -69,212 +60,168 @@ const TireCreate = () => {
     }
   };
 
-  // Get position options based on vehicle type
-  const getPositionOptions = () => {
-    if (vehicleType === "Trailer") {
-      return [
-        "Trailer Front Left",
-        "Trailer Front Right",
-        "Trailer Rear Left",
-        "Trailer Rear Right",
-        "Spare",
-      ];
-    }
-    return ["Front Left", "Front Right", "Rear Left", "Rear Right", "Spare"];
-  };
-
-  // Get filtered vehicles based on selected type
-  const filteredVehicles = vehicles.filter((v) => v.type === vehicleType);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">Loading vehicles...</p>
-      </div>
-    );
-  }
+  const positions = [
+    "Front Left",
+    "Front Right",
+    "Rear Left",
+    "Rear Right",
+    "Spare",
+    "Trailer Front Left",
+    "Trailer Front Right",
+    "Trailer Rear Left",
+    "Trailer Rear Right",
+  ];
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Add Tire</h1>
+    <div className="max-w-3xl mx-auto">
+      <div className="mb-8 flex items-center gap-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center shadow-lg">
+          <Circle className="w-8 h-8 text-white" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Add New Tire</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Fill in the details to add a new tire</p>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-4">Tire Information</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Hash className="w-4 h-4" />
+              Serial Number *
+            </label>
+            <input
+              type="text"
+              {...register("serialNumber")}
+              placeholder="TIRE-001"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.serialNumber && <p className="mt-2 text-sm text-red-600">{errors.serialNumber.message}</p>}
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Serial Number */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Serial Number *
-              </label>
-              <input
-                type="text"
-                {...register("serialNumber")}
-                placeholder="e.g., TIRE-001"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.serialNumber && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.serialNumber.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Tag className="w-4 h-4" />
+              Brand *
+            </label>
+            <input
+              type="text"
+              {...register("brand")}
+              placeholder="Michelin"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.brand && <p className="mt-2 text-sm text-red-600">{errors.brand.message}</p>}
+          </div>
 
-            {/* Brand */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Brand *
-              </label>
-              <input
-                type="text"
-                {...register("brand")}
-                placeholder="e.g., Michelin"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.brand && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.brand.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Package className="w-4 h-4" />
+              Size *
+            </label>
+            <input
+              type="text"
+              {...register("size")}
+              placeholder="295/80R22.5"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.size && <p className="mt-2 text-sm text-red-600">{errors.size.message}</p>}
+          </div>
 
-            {/* Size */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Size *
-              </label>
-              <input
-                type="text"
-                {...register("size")}
-                placeholder="e.g., 315/80R22.5"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.size && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.size.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <CheckCircle className="w-4 h-4" />
+              Status *
+            </label>
+            <select
+              {...register("status")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Bon">Bon</option>
+              <option value="Usé">Usé</option>
+              <option value="À remplacer">À remplacer</option>
+            </select>
+            {errors.status && <p className="mt-2 text-sm text-red-600">{errors.status.message}</p>}
+          </div>
 
-            {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status *
-              </label>
-              <select
-                {...register("status")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="Bon">Bon</option>
-                <option value="À remplacer">À remplacer</option>
-                <option value="Usé">Usé</option>
-              </select>
-              {errors.status && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.status.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Calendar className="w-4 h-4" />
+              Installation Date *
+            </label>
+            <input
+              type="date"
+              {...register("installationDate")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.installationDate && <p className="mt-2 text-sm text-red-600">{errors.installationDate.message}</p>}
+          </div>
 
-            {/* Installation Date */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Installation Date *
-              </label>
-              <input
-                type="date"
-                {...register("installationDate")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.installationDate && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.installationDate.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <MapPin className="w-4 h-4" />
+              Position *
+            </label>
+            <select
+              {...register("vehiclePosition")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select position</option>
+              {positions.map(pos => (
+                <option key={pos} value={pos}>{pos}</option>
+              ))}
+            </select>
+            {errors.vehiclePosition && <p className="mt-2 text-sm text-red-600">{errors.vehiclePosition.message}</p>}
+          </div>
 
-            {/* Vehicle Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Associated Vehicle Type *
-              </label>
-              <select
-                {...register("associatedVehicleType")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="Truck">Truck</option>
-                <option value="Trailer">Trailer</option>
-              </select>
-              {errors.associatedVehicleType && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.associatedVehicleType.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Truck className="w-4 h-4" />
+              Vehicle Type *
+            </label>
+            <select
+              {...register("associatedVehicleType")}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Truck">Truck</option>
+              <option value="Trailer">Trailer</option>
+            </select>
+          </div>
 
-            {/* Vehicle Position */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vehicle Position *
-              </label>
-              <select
-                {...register("vehiclePosition")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Position</option>
-                {getPositionOptions().map((position) => (
-                  <option key={position} value={position}>
-                    {position}
-                  </option>
-                ))}
-              </select>
-              {errors.vehiclePosition && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.vehiclePosition.message}
-                </p>
-              )}
-            </div>
-
-            {/* Associated Vehicle */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Associated Vehicle *
-              </label>
-              <select
-                {...register("associatedVehicleId")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Vehicle</option>
-                {filteredVehicles.map((vehicle) => (
-                  <option key={vehicle._id} value={vehicle._id}>
-                    {vehicle.label}
-                  </option>
-                ))}
-              </select>
-              {errors.associatedVehicleId && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.associatedVehicleId.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Truck className="w-4 h-4" />
+              Vehicle *
+            </label>
+            <select
+              {...register("associatedVehicleId")}
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              <option value="">Select vehicle</option>
+              {vehicles.map(v => (
+                <option key={v.id} value={v.id}>{v.label}</option>
+              ))}
+            </select>
+            {errors.associatedVehicleId && <p className="mt-2 text-sm text-red-600">{errors.associatedVehicleId.message}</p>}
           </div>
         </div>
 
-        {/* Form Actions */}
-        <div className="flex justify-end gap-3">
+        <div className="mt-8 flex justify-end gap-4">
           <button
             type="button"
             onClick={() => navigate("/tires")}
-            className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2"
           >
+            <X className="w-4 h-4" />
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50"
           >
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {isSubmitting ? "Creating..." : "Create Tire"}
           </button>
         </div>

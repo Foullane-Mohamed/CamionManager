@@ -31,7 +31,7 @@ import TripView from "../pages/trips/TripView";
 // Fuel pages
 import FuelList from "../pages/fuels/FuelList";
 import FuelCreate from "../pages/fuels/FuelCreate";
-import FuelEdit from "../pages/fuels/FuelEdit";
+// import FuelEdit from "../pages/fuels/FuelEdit";
 import FuelView from "../pages/fuels/FuelView";
 
 // Maintenance pages
@@ -160,14 +160,14 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route
+          {/* <Route
             path="fuels/:id/edit"
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <FuelEdit />
               </ProtectedRoute>
             }
-          />
+          /> */}
           <Route path="fuels/:id" element={<FuelView />} />
           {/* Maintenances */}
           <Route path="maintenances" element={<MaintenanceList />} />
