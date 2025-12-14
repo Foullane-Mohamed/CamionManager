@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { tireService } from "../../services/tire.service";
 import { useApp } from "../../context/AppContext";
@@ -27,11 +27,7 @@ const TireList = () => {
   const { showSuccess, showError } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchTires();
-  }, []);
-
-  const fetchTires = async () => {
+  const fetchTires = useCallback(async () => {
     try {
       setLoading(true);
       const data = await tireService.getAll();
@@ -52,7 +48,11 @@ const TireList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    fetchTires();
+  }, [fetchTires]);
 
   const handleDelete = async (id, serialNumber) => {
     if (

@@ -1,20 +1,20 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { 
-  LayoutDashboard, 
-  Truck, 
-  Container, 
-  Route, 
-  Fuel, 
-  Wrench, 
-  CircleDot, 
+import {
+  LayoutDashboard,
+  Truck,
+  Container,
+  Route,
+  Fuel,
+  Wrench,
+  CircleDot,
   Users,
   Shield,
-  Car
+  Car,
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
-  const { userRole, user } = useAuth();
+  const { userRole } = useAuth();
 
   const adminNavigation = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -39,7 +39,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
 
   const navigation =
     userRole === "admin" ? adminNavigation : chauffeurNavigation;
-    
+
   return (
     <>
       {isOpen && (
@@ -62,7 +62,9 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               <Car className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             )}
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Role</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                Role
+              </p>
               <p className="text-sm font-semibold text-gray-900 dark:text-white capitalize">
                 {userRole === "admin" ? "Administrator" : "Chauffeur"}
               </p>
@@ -93,9 +95,6 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               );
             })}
           </div>
-
-  
-
         </nav>
       </aside>
     </>

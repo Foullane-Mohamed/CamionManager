@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { fuelService } from "../../services/fuel.service";
 import { useApp } from "../../context/AppContext";
@@ -25,23 +25,22 @@ const FuelView = () => {
   const [loading, setLoading] = useState(true);
   const { showError, showSuccess } = useApp();
   const { userRole } = useAuth();
-
-  useEffect(() => {
-    fetchFuel();
-  }, [id]);
-
-  const fetchFuel = async () => {
+  const fetchFuel = useCallback(async () => {
     try {
       setLoading(true);
       const data = await fuelService.getOne(id);
       setFuel(data);
-    } catch (error) {
+    } catch {
       showError("Failed to fetch fuel record details");
       navigate("/fuels");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showError, navigate]);
+
+  useEffect(() => {
+    fetchFuel();
+  }, [fetchFuel]);
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this fuel record?")) {

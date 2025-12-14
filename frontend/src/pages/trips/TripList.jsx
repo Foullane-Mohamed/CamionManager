@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { tripService } from "../../services/trip.service";
 import { useApp } from "../../context/AppContext";
@@ -25,10 +25,7 @@ const TripList = () => {
   const { showSuccess, showError } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchTrips();
-  }, []);
-  const fetchTrips = async () => {
+  const fetchTrips = useCallback(async () => {
     try {
       setLoading(true);
       const data = await tripService.getAll();
@@ -49,7 +46,11 @@ const TripList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    fetchTrips();
+  }, [fetchTrips]);
 
   const handleDelete = async (id, tripNumber) => {
     if (!window.confirm(`Delete trip ${tripNumber}?`)) return;

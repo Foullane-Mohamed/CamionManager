@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { maintenanceService } from "../../services/maintenance.service";
 import { useApp } from "../../context/AppContext";
@@ -26,22 +26,22 @@ const MaintenanceView = () => {
   const { showError, showSuccess } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchMaintenance();
-  }, [id]);
-
-  const fetchMaintenance = async () => {
+  const fetchMaintenance = useCallback(async () => {
     try {
       setLoading(true);
       const data = await maintenanceService.getOne(id);
       setMaintenance(data);
-    } catch (error) {
+    } catch {
       showError("Failed to fetch maintenance details");
       navigate("/maintenances");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showError, navigate]);
+
+  useEffect(() => {
+    fetchMaintenance();
+  }, [fetchMaintenance]);
 
   const handleDelete = async () => {
     if (
@@ -60,21 +60,6 @@ const MaintenanceView = () => {
       showError(
         error.response?.data?.message || "Failed to delete maintenance record"
       );
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Completed":
-        return "bg-green-100 text-green-800";
-      case "In Progress":
-        return "bg-blue-100 text-blue-800";
-      case "Scheduled":
-        return "bg-yellow-100 text-yellow-800";
-      case "Cancelled":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
     }
   };
 

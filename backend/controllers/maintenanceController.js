@@ -128,8 +128,13 @@ export const deleteMaintenanceRule = async (req, res) => {
 
 export const createMaintenance = async (req, res) => {
   try {
+    console.log("=== CREATE MAINTENANCE REQUEST ===");
+    console.log("Request body:", JSON.stringify(req.body, null, 2));
+    console.log("User:", req.user);
+    
     const { error } = createMaintenanceValidator(req.body);
     if (error) {
+      console.log("Validation error:", error.details[0].message);
       return res.status(400).json({
         success: false,
         message: error.details[0].message,
@@ -138,7 +143,7 @@ export const createMaintenance = async (req, res) => {
 
     const maintenance = await maintenanceService.createMaintenance(
       req.body,
-      req.user.userId
+      req.user._id
     );
 
     res.status(201).json({
@@ -147,6 +152,8 @@ export const createMaintenance = async (req, res) => {
       data: maintenance,
     });
   } catch (error) {
+    console.error("Error creating maintenance:", error.message);
+    console.error("Stack:", error.stack);
     res.status(500).json({
       success: false,
       message: "Error creating maintenance record",

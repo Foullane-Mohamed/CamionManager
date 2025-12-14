@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { tripService } from "../../services/trip.service";
 import { useApp } from "../../context/AppContext";
@@ -30,22 +30,22 @@ const TripView = () => {
   const { showError, showSuccess } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchTrip();
-  }, [id]);
-
-  const fetchTrip = async () => {
+  const fetchTrip = useCallback(async () => {
     try {
       setLoading(true);
       const data = await tripService.getOne(id);
       setTrip(data);
-    } catch (error) {
+    } catch {
       showError("Failed to fetch trip details");
       navigate("/trips");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showError, navigate]);
+
+  useEffect(() => {
+    fetchTrip();
+  }, [fetchTrip]);
 
   const handleDelete = async () => {
     if (

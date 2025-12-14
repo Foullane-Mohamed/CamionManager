@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { trailerService } from "../../services/trailer.service";
 import { useApp } from "../../context/AppContext";
@@ -26,21 +26,21 @@ const TrailerView = () => {
   const [trailer, setTrailer] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchTrailer();
-  }, [id]);
-
-  const fetchTrailer = async () => {
+  const fetchTrailer = useCallback(async () => {
     try {
       const data = await trailerService.getOne(id);
       setTrailer(data);
-    } catch (error) {
+    } catch {
       showError("Failed to fetch trailer details");
       navigate("/trailers");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showError, navigate]);
+
+  useEffect(() => {
+    fetchTrailer();
+  }, [fetchTrailer]);
 
   const handleDelete = async () => {
     if (

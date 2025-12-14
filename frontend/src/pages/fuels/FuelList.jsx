@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { fuelService } from "../../services/fuel.service";
 import { useApp } from "../../context/AppContext";
@@ -24,11 +24,7 @@ const FuelList = () => {
   const [search, setSearch] = useState("");
   const { showSuccess, showError } = useApp();
   const { userRole } = useAuth();
-
-  useEffect(() => {
-    fetchFuels();
-  }, []);
-  const fetchFuels = async () => {
+  const fetchFuels = useCallback(async () => {
     try {
       setLoading(true);
       const data = await fuelService.getAll();
@@ -51,7 +47,11 @@ const FuelList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    fetchFuels();
+  }, [fetchFuels]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this fuel record?")) {

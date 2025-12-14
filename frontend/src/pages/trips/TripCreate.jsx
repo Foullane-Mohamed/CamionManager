@@ -1,4 +1,4 @@
-﻿import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tripSchema } from "../../validation/trip.schema";
 import { tripService } from "../../services/trip.service";
@@ -35,16 +35,32 @@ const TripCreate = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [trucksData, trailersData, usersData] = await Promise.all([
+      const [trucksResponse, trailersResponse, usersResponse] = await Promise.all([
         truckService.getAll(),
         trailerService.getAll(),
         userService.getAll(),
       ]);
+      
+      // Extract arrays from response objects, with fallback to empty arrays
+      const trucksData = Array.isArray(trucksResponse) 
+        ? trucksResponse 
+        : (trucksResponse?.trucks || []);
+      const trailersData = Array.isArray(trailersResponse) 
+        ? trailersResponse 
+        : (trailersResponse?.trailers || []);
+      const usersData = Array.isArray(usersResponse) 
+        ? usersResponse 
+        : (usersResponse?.users || []);
+      
       setTrucks(trucksData);
       setTrailers(trailersData);
-      setDrivers(usersData.filter(u => u.role === "driver" && u.approved));
+      setDrivers(usersData.filter(u => u.role === "chauffeur" && u.accountStatus === "approved"));
     } catch (error) {
       toast.error("Failed to load data");
+      // Ensure arrays are always set, even on error
+      setTrucks([]);
+      setTrailers([]);
+      setDrivers([]);
     } finally {
       setLoading(false);
     }

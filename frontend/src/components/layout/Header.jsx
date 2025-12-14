@@ -6,7 +6,7 @@ import { Menu, User, LogOut, Settings, Sun, Moon, Truck } from "lucide-react";
 
 const Header = ({ toggleSidebar }) => {
   const { user, logout, userRole } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
+  useTheme(); // Keep context subscription for theme reactivity
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -14,8 +14,6 @@ const Header = ({ toggleSidebar }) => {
     await logout();
     navigate("/login");
   };
-
-  const roleColor = userRole === "admin" ? "blue" : "emerald";
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 fixed top-0 left-0 right-0 z-40 h-16 shadow-sm">
@@ -30,27 +28,21 @@ const Header = ({ toggleSidebar }) => {
           </button>
 
           <div className="flex items-center gap-3">
-        
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                 CamionManager
               </h1>
-            
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-      
-    
-
           {/* User Menu */}
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
-          
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {user?.name}
@@ -87,8 +79,7 @@ const Header = ({ toggleSidebar }) => {
                       {user?.email}
                     </p>
                   </div>
-            
-                
+
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 flex items-center gap-2 transition-colors"

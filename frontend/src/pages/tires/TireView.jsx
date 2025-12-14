@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { tireService } from "../../services/tire.service";
 import { useApp } from "../../context/AppContext";
@@ -25,22 +25,22 @@ const TireView = () => {
   const { showError, showSuccess } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchTire();
-  }, [id]);
-
-  const fetchTire = async () => {
+  const fetchTire = useCallback(async () => {
     try {
       setLoading(true);
       const data = await tireService.getOne(id);
       setTire(data);
-    } catch (error) {
+    } catch {
       showError("Failed to fetch tire details");
       navigate("/tires");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showError, navigate]);
+
+  useEffect(() => {
+    fetchTire();
+  }, [fetchTire]);
 
   const handleDelete = async () => {
     if (

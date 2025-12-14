@@ -4,10 +4,7 @@ import * as maintenanceController from "../controllers/maintenanceController.js"
 
 const router = express.Router();
 
-// All maintenance routes require authentication and admin role
-router.use(protect, adminOnly);
-
-// ========== MAINTENANCE RULE ROUTES ==========
+// ========== MAINTENANCE RULE ROUTES (Admin Only) ==========
 
 /**
  * @swagger
@@ -37,7 +34,7 @@ router.use(protect, adminOnly);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.post("/rules", maintenanceController.createMaintenanceRule);
+router.post("/rules", protect, adminOnly, maintenanceController.createMaintenanceRule);
 
 /**
  * @swagger
@@ -73,7 +70,7 @@ router.post("/rules", maintenanceController.createMaintenanceRule);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.get("/rules", maintenanceController.getAllMaintenanceRules);
+router.get("/rules", protect, adminOnly, maintenanceController.getAllMaintenanceRules);
 
 /**
  * @swagger
@@ -104,7 +101,7 @@ router.get("/rules", maintenanceController.getAllMaintenanceRules);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.get("/rules/:id", maintenanceController.getMaintenanceRuleById);
+router.get("/rules/:id", protect, adminOnly, maintenanceController.getMaintenanceRuleById);
 
 /**
  * @swagger
@@ -141,7 +138,7 @@ router.get("/rules/:id", maintenanceController.getMaintenanceRuleById);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.put("/rules/:id", maintenanceController.updateMaintenanceRule);
+router.put("/rules/:id", protect, adminOnly, maintenanceController.updateMaintenanceRule);
 
 /**
  * @swagger
@@ -168,7 +165,7 @@ router.put("/rules/:id", maintenanceController.updateMaintenanceRule);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.delete("/rules/:id", maintenanceController.deleteMaintenanceRule);
+router.delete("/rules/:id", protect, adminOnly, maintenanceController.deleteMaintenanceRule);
 
 // ========== MAINTENANCE RECORD ROUTES ==========
 
@@ -200,7 +197,7 @@ router.delete("/rules/:id", maintenanceController.deleteMaintenanceRule);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.post("/", maintenanceController.createMaintenance);
+router.post("/", protect, maintenanceController.createMaintenance);
 
 /**
  * @swagger
@@ -259,7 +256,7 @@ router.post("/", maintenanceController.createMaintenance);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.get("/", maintenanceController.getAllMaintenances);
+router.get("/", protect, maintenanceController.getAllMaintenances);
 
 /**
  * @swagger
@@ -307,7 +304,7 @@ router.get("/", maintenanceController.getAllMaintenances);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.get("/stats", maintenanceController.getMaintenanceStatistics);
+router.get("/stats", protect, adminOnly, maintenanceController.getMaintenanceStatistics);
 
 /**
  * @swagger
@@ -338,7 +335,7 @@ router.get("/stats", maintenanceController.getMaintenanceStatistics);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.get("/:id", maintenanceController.getMaintenanceById);
+router.get("/:id", protect, maintenanceController.getMaintenanceById);
 
 /**
  * @swagger
@@ -373,6 +370,7 @@ router.get("/:id", maintenanceController.getMaintenanceById);
  */
 router.get(
   "/vehicle/:vehicleId",
+  protect,
   maintenanceController.getMaintenancesByVehicle
 );
 
@@ -411,7 +409,7 @@ router.get(
  *       403:
  *         description: Forbidden - Admin only
  */
-router.put("/:id", maintenanceController.updateMaintenance);
+router.put("/:id", protect, adminOnly, maintenanceController.updateMaintenance);
 
 /**
  * @swagger
@@ -454,7 +452,7 @@ router.put("/:id", maintenanceController.updateMaintenance);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.patch("/:id/status", maintenanceController.updateMaintenanceStatus);
+router.patch("/:id/status", protect, maintenanceController.updateMaintenanceStatus);
 
 /**
  * @swagger
@@ -481,7 +479,7 @@ router.patch("/:id/status", maintenanceController.updateMaintenanceStatus);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.delete("/:id", maintenanceController.deleteMaintenance);
+router.delete("/:id", protect, adminOnly, maintenanceController.deleteMaintenance);
 
 // ========== ALERT ROUTES ==========
 
@@ -532,7 +530,7 @@ router.delete("/:id", maintenanceController.deleteMaintenance);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.get("/alerts/all", maintenanceController.checkAllMaintenanceAlerts);
+router.get("/alerts/all", protect, maintenanceController.checkAllMaintenanceAlerts);
 
 /**
  * @swagger
@@ -567,6 +565,7 @@ router.get("/alerts/all", maintenanceController.checkAllMaintenanceAlerts);
  */
 router.get(
   "/alerts/vehicle/:vehicleId",
+  protect,
   maintenanceController.checkMaintenanceAlerts
 );
 

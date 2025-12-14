@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { userService } from "../../services/user.service";
 import { useApp } from "../../context/AppContext";
@@ -22,12 +22,7 @@ const UserList = () => {
   const [tab, setTab] = useState("all");
   const { showSuccess, showError } = useApp();
 
-  useEffect(() => {
-    fetchUsers();
-    fetchPendingUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const data = await userService.getAll();
@@ -48,9 +43,9 @@ const UserList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
 
-  const fetchPendingUsers = async () => {
+  const fetchPendingUsers = useCallback(async () => {
     try {
       const data = await userService.getPending();
 
@@ -64,11 +59,16 @@ const UserList = () => {
       }
 
       setPendingUsers(usersArray);
-    } catch (error) {
+    } catch {
       console.error("Failed to fetch pending users");
       setPendingUsers([]);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+    fetchPendingUsers();
+  }, [fetchUsers, fetchPendingUsers]);
 
   const handleApprove = async (id, name) => {
     if (!window.confirm(`Approve user ${name}?`)) return;

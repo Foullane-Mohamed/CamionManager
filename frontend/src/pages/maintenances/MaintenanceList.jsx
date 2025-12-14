@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { maintenanceService } from "../../services/maintenance.service";
 import { useApp } from "../../context/AppContext";
@@ -29,11 +29,7 @@ const MaintenanceList = () => {
   const { showSuccess, showError } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchMaintenances();
-  }, []);
-
-  const fetchMaintenances = async () => {
+  const fetchMaintenances = useCallback(async () => {
     try {
       setLoading(true);
       const data = await maintenanceService.getAll();
@@ -56,7 +52,11 @@ const MaintenanceList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    fetchMaintenances();
+  }, [fetchMaintenances]);
 
   const handleDelete = async (id, maintenanceNumber) => {
     if (

@@ -1,5 +1,8 @@
 import axios from "axios";
 
+// Flag to prevent multiple redirects
+let isRedirecting = false;
+
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -23,7 +26,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isRedirecting) {
+      isRedirecting = true;
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";

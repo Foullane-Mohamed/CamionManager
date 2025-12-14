@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
-  const { userRole, user } = useAuth();
+  const { userRole } = useAuth();
 
   const adminNavigation = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },

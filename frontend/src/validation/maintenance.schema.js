@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+// Frontend schema - matches backend createMaintenanceValidator
+// Note: performedBy is NOT sent from frontend, it's set by backend from req.user.userId
 export const maintenanceSchema = z.object({
   maintenanceType: z.enum([
     "Tire Replacement",
@@ -25,13 +27,11 @@ export const maintenanceSchema = z.object({
       })
     )
     .optional(),
-  isAlertTriggered: z.boolean().default(false),
-  alertType: z.enum(["Mileage", "Time", "Both", "Manual"]).default("Manual"),
   status: z
     .enum(["Scheduled", "In Progress", "Completed", "Cancelled"])
     .default("Completed"),
-  performedBy: z.string().min(1, "Performed by user ID is required"),
   remarks: z.string().optional().or(z.literal("")),
 });
 
 export const maintenanceUpdateSchema = maintenanceSchema.partial();
+

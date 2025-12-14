@@ -160,7 +160,7 @@ router.get("/", protect, getAllTires);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.post("/", protect, adminOnly, createTire);
+router.post("/", protect, createTire);
 
 /**
  * @swagger

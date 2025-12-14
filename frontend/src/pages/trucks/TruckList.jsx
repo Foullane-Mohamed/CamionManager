@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { truckService } from "../../services/truck.service";
 import { useApp } from "../../context/AppContext";
@@ -25,10 +25,7 @@ const TruckList = () => {
   const { showSuccess, showError } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchTrucks();
-  }, []);
-  const fetchTrucks = async () => {
+  const fetchTrucks = useCallback(async () => {
     try {
       setLoading(true);
       const data = await truckService.getAll();
@@ -49,7 +46,11 @@ const TruckList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    fetchTrucks();
+  }, [fetchTrucks]);
 
   const handleDelete = async (id, matricule) => {
     if (

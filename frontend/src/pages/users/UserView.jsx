@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { userService } from "../../services/user.service";
 import { useApp } from "../../context/AppContext";
@@ -23,21 +23,21 @@ const UserView = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchUser();
-  }, [id]);
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const data = await userService.getOne(id);
       setUser(data);
-    } catch (error) {
+    } catch {
       showError("Failed to fetch user details");
       navigate("/users");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showError, navigate]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   const getStatusBadge = (status) => {
     const styles = {

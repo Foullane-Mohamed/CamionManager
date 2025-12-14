@@ -195,7 +195,7 @@ router.get("/", protect, getAllFuels);
  *       403:
  *         description: Forbidden - Admin only
  */
-router.post("/", protect, adminOnly, createFuel);
+router.post("/", protect, createFuel);
 
 /**
  * @swagger

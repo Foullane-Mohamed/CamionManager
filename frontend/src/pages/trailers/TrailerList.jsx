@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { trailerService } from "../../services/trailer.service";
 import { useApp } from "../../context/AppContext";
@@ -25,10 +25,7 @@ const TrailerList = () => {
   const { showSuccess, showError } = useApp();
   const { userRole } = useAuth();
 
-  useEffect(() => {
-    fetchTrailers();
-  }, []);
-  const fetchTrailers = async () => {
+  const fetchTrailers = useCallback(async () => {
     try {
       setLoading(true);
       const data = await trailerService.getAll();
@@ -49,7 +46,11 @@ const TrailerList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    fetchTrailers();
+  }, [fetchTrailers]);
 
   const handleDelete = async (id, matricule) => {
     if (

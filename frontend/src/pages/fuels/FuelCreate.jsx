@@ -57,17 +57,37 @@ const FuelCreate = () => {
       (parseFloat(quantity) || 0) * (parseFloat(pricePerLitre) || 0);
     setValue("totalCost", parseFloat(total.toFixed(2)));
   }, [quantity, pricePerLitre, setValue]);
-
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [trucksData, trailersData, driversData, tripsData] =
-          await Promise.all([
-            truckService.getAll(),
-            trailerService.getAll(),
-            userService.getAll(),
-            tripService.getAll(),
-          ]);
+        const [
+          trucksResponse,
+          trailersResponse,
+          driversResponse,
+          tripsResponse,
+        ] = await Promise.all([
+          truckService.getAll(),
+          trailerService.getAll(),
+          userService.getAll(),
+          tripService.getAll(),
+        ]);
+
+        // Safely extract array from response
+        const extractArray = (response, keys = []) => {
+          if (Array.isArray(response)) return response;
+          for (const key of keys) {
+            if (response && Array.isArray(response[key])) return response[key];
+          }
+          return [];
+        };
+
+        const trucksData = extractArray(trucksResponse, ["trucks", "data"]);
+        const trailersData = extractArray(trailersResponse, [
+          "trailers",
+          "data",
+        ]);
+        const driversData = extractArray(driversResponse, ["users", "data"]);
+        const tripsData = extractArray(tripsResponse, ["trips", "data"]);
 
         const allVehicles = [
           ...trucksData.map((t) => ({
@@ -81,12 +101,17 @@ const FuelCreate = () => {
             label: `${t.matricule} (Trailer)`,
           })),
         ];
-
         setVehicles(allVehicles);
         setDrivers(driversData.filter((u) => u.role === "chauffeur"));
         setTrips(tripsData);
       } catch (error) {
-        toast.error("Failed to load form data");
+        toast.error(
+          "Failed to load form data. Please ensure the backend is running."
+        );
+        // Ensure arrays are always set, even on error
+        setVehicles([]);
+        setDrivers([]);
+        setTrips([]);
       } finally {
         setLoading(false);
       }
@@ -185,18 +210,19 @@ const FuelCreate = () => {
             >
               <Truck className="w-4 h-4" />
               Vehicle *
-            </label>
+            </label>{" "}
             <select
               id="linkedVehicle"
               {...register("linkedVehicle")}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
             >
               <option value="">Select vehicle</option>
-              {vehicles.map((vehicle) => (
-                <option key={vehicle._id} value={vehicle._id}>
-                  {vehicle.label}
-                </option>
-              ))}
+              {Array.isArray(vehicles) &&
+                vehicles.map((vehicle) => (
+                  <option key={vehicle._id} value={vehicle._id}>
+                    {vehicle.label}
+                  </option>
+                ))}
             </select>
             {errors.linkedVehicle && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -212,18 +238,19 @@ const FuelCreate = () => {
             >
               <User className="w-4 h-4" />
               Driver *
-            </label>
+            </label>{" "}
             <select
               id="linkedDriver"
               {...register("linkedDriver")}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
             >
               <option value="">Select driver</option>
-              {drivers.map((driver) => (
-                <option key={driver._id} value={driver._id}>
-                  {driver.name}
-                </option>
-              ))}
+              {Array.isArray(drivers) &&
+                drivers.map((driver) => (
+                  <option key={driver._id} value={driver._id}>
+                    {driver.name}
+                  </option>
+                ))}
             </select>
             {errors.linkedDriver && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -239,19 +266,20 @@ const FuelCreate = () => {
             >
               <Route className="w-4 h-4" />
               Trip (Optional)
-            </label>
+            </label>{" "}
             <select
               id="linkedTrip"
               {...register("linkedTrip")}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
             >
               <option value="">Select trip (optional)</option>
-              {trips.map((trip) => (
-                <option key={trip._id} value={trip._id}>
-                  {trip.tripNumber} - {trip.startPoint} →{" "}
-                  {trip.destinationPoint}
-                </option>
-              ))}
+              {Array.isArray(trips) &&
+                trips.map((trip) => (
+                  <option key={trip._id} value={trip._id}>
+                    {trip.tripNumber} - {trip.startPoint} →{" "}
+                    {trip.destinationPoint}
+                  </option>
+                ))}
             </select>
           </div>
 

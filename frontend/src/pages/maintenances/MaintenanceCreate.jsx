@@ -19,6 +19,7 @@ import {
   FileText,
   Settings,
   AlertCircle,
+  Gauge,
 } from "lucide-react";
 
 const MaintenanceCreate = () => {
@@ -30,25 +31,60 @@ const MaintenanceCreate = () => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(maintenanceSchema),
     defaultValues: {
       maintenanceType: "Oil Change",
       status: "Completed",
-      alertType: "Manual",
-      isAlertTriggered: false,
-      performedBy: user?._id || "",
+      vehicleMileageAtMaintenance: 0,
+      cost: 0,
     },
   });
 
+  const selectedVehicleId = watch("linkedVehicle");
+
+  // Auto-fill vehicle mileage when vehicle is selected
+  useEffect(() => {
+    if (selectedVehicleId && vehicles.length > 0) {
+      const selectedVehicle = vehicles.find(v => v._id === selectedVehicleId);
+      if (selectedVehicle && selectedVehicle.currentMileage) {
+        setValue("vehicleMileageAtMaintenance", selectedVehicle.currentMileage);
+      }
+    }
+  }, [selectedVehicleId, vehicles, setValue]);
   useEffect(() => {
     const loadVehicles = async () => {
       try {
-        const [trucks, trailers] = await Promise.all([
+        const [trucksResponse, trailersResponse] = await Promise.all([
           truckService.getAll(),
           trailerService.getAll(),
         ]);
+
+        // Handle different response formats
+        let trucks = [];
+        let trailers = [];
+
+        if (Array.isArray(trucksResponse)) {
+          trucks = trucksResponse;
+        } else if (trucksResponse && Array.isArray(trucksResponse.trucks)) {
+          trucks = trucksResponse.trucks;
+        } else if (trucksResponse && Array.isArray(trucksResponse.data)) {
+          trucks = trucksResponse.data;
+        }
+
+        if (Array.isArray(trailersResponse)) {
+          trailers = trailersResponse;
+        } else if (
+          trailersResponse &&
+          Array.isArray(trailersResponse.trailers)
+        ) {
+          trailers = trailersResponse.trailers;
+        } else if (trailersResponse && Array.isArray(trailersResponse.data)) {
+          trailers = trailersResponse.data;
+        }
 
         const allVehicles = [
           ...trucks.map((t) => ({
@@ -65,7 +101,10 @@ const MaintenanceCreate = () => {
 
         setVehicles(allVehicles);
       } catch (error) {
+        console.error("Error loading vehicles:", error);
         toast.error("Failed to load vehicles");
+        // Ensure array is always set, even on error
+        setVehicles([]);
       } finally {
         setLoading(false);
       }
@@ -74,14 +113,14 @@ const MaintenanceCreate = () => {
   }, []);
   const onSubmit = async (data) => {
     try {
-      data.performedBy = user?._id;
-
       await maintenanceService.create(data);
       toast.success("Maintenance record created successfully");
       navigate("/maintenances");
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to create maintenance record"
+        error.response?.data?.message || 
+        error.response?.data?.error || 
+        "Failed to create maintenance record"
       );
     }
   };
@@ -143,18 +182,19 @@ const MaintenanceCreate = () => {
             >
               <Truck className="w-4 h-4" />
               Vehicle *
-            </label>
+            </label>{" "}
             <select
               id="linkedVehicle"
               {...register("linkedVehicle")}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
             >
               <option value="">Select vehicle</option>
-              {vehicles.map((vehicle) => (
-                <option key={vehicle._id} value={vehicle._id}>
-                  {vehicle.label}
-                </option>
-              ))}
+              {Array.isArray(vehicles) &&
+                vehicles.map((vehicle) => (
+                  <option key={vehicle._id} value={vehicle._id}>
+                    {vehicle.label}
+                  </option>
+                ))}
             </select>
             {errors.linkedVehicle && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -178,15 +218,56 @@ const MaintenanceCreate = () => {
             >
               <option value="Oil Change">Oil Change</option>
               <option value="Tire Replacement">Tire Replacement</option>
-              <option value="Brake Repair">Brake Repair</option>
-              <option value="Engine Repair">Engine Repair</option>
-              <option value="Transmission Repair">Transmission Repair</option>
-              <option value="Inspection">Inspection</option>
+              <option value="Vehicle Revision">Vehicle Revision</option>
               <option value="Other">Other</option>
             </select>
             {errors.maintenanceType && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                 {errors.maintenanceType.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="vehicleMileageAtMaintenance"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <Gauge className="w-4 h-4" />
+              Vehicle Mileage *
+            </label>
+            <input
+              id="vehicleMileageAtMaintenance"
+              type="number"
+              {...register("vehicleMileageAtMaintenance", { valueAsNumber: true })}
+              placeholder="0"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            />
+            {errors.vehicleMileageAtMaintenance && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.vehicleMileageAtMaintenance.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="serviceProvider"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <FileText className="w-4 h-4" />
+              Service Provider *
+            </label>
+            <input
+              id="serviceProvider"
+              type="text"
+              {...register("serviceProvider")}
+              placeholder="Enter service provider name"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-colors"
+            />
+            {errors.serviceProvider && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {errors.serviceProvider.message}
               </p>
             )}
           </div>

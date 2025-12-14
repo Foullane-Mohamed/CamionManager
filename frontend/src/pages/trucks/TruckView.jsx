@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { truckService } from "../../services/truck.service";
 import { useApp } from "../../context/AppContext";
@@ -28,21 +28,21 @@ const TruckView = () => {
   const [truck, setTruck] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchTruck();
-  }, [id]);
-
-  const fetchTruck = async () => {
+  const fetchTruck = useCallback(async () => {
     try {
       const data = await truckService.getOne(id);
       setTruck(data);
-    } catch (error) {
+    } catch {
       showError("Failed to fetch truck details");
       navigate("/trucks");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showError, navigate]);
+
+  useEffect(() => {
+    fetchTruck();
+  }, [fetchTruck]);
 
   const handleDelete = async () => {
     if (
