@@ -94,6 +94,17 @@ const UserList = () => {
     }
   };
 
+  const handleStatusChange = async (id, newStatus, name) => {
+    try {
+      await userService.approve(id, newStatus);
+      showSuccess(`User ${name} status changed to ${newStatus}`);
+      fetchUsers();
+      fetchPendingUsers();
+    } catch (error) {
+      showError(error.response?.data?.message || "Failed to update status");
+    }
+  };
+
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Delete user ${name}? This action cannot be undone.`))
       return;
@@ -269,6 +280,23 @@ const UserList = () => {
                             <Eye className="w-4 h-4" />
                             View
                           </Link>
+                          {user.role === "chauffeur" && (
+                            <select
+                              value={user.accountStatus}
+                              onChange={(e) =>
+                                handleStatusChange(
+                                  user._id,
+                                  e.target.value,
+                                  user.name
+                                )
+                              }
+                              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="approved">Approved</option>
+                              <option value="rejected">Rejected</option>
+                            </select>
+                          )}
                           <button
                             onClick={() => handleDelete(user._id, user.name)}
                             className="inline-flex items-center gap-1.5 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"

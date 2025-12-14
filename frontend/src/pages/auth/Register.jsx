@@ -221,6 +221,32 @@ const Register = () => {
 
                 <div>
                   <label
+                    htmlFor="licenseType"
+                    className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    License Type *
+                  </label>
+                  <select
+                    id="licenseType"
+                    {...register("licenseType")}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
+                  >
+                    <option value="">Select license type</option>
+                    <option value="B">B - Light vehicles</option>
+                    <option value="C">C - Medium trucks</option>
+                    <option value="D">D - Buses</option>
+                    <option value="EC">EC - Heavy trucks with trailer</option>
+                  </select>
+                  {errors.licenseType && (
+                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                      {errors.licenseType.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
                     htmlFor="dateOfBirth"
                     className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
