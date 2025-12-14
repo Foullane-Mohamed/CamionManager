@@ -95,9 +95,6 @@ const MaintenanceEdit = () => {
       setValue("description", maintenanceData.description || "");
       setValue("status", maintenanceData.status);
       setValue("remarks", maintenanceData.remarks || "");
-      setValue("isAlertTriggered", maintenanceData.isAlertTriggered);
-      setValue("alertType", maintenanceData.alertType);
-      setValue("performedBy", maintenanceData.performedBy?._id || user?._id);
     } catch {
       toast.error("Failed to load maintenance data");
       navigate("/maintenances");
@@ -111,8 +108,7 @@ const MaintenanceEdit = () => {
   }, [loadData]);
   const onSubmit = async (data) => {
     try {
-      data.performedBy = user?._id;
-
+      // Don't send performedBy - backend doesn't accept it for updates
       await maintenanceService.update(id, data);
       toast.success("Maintenance record updated successfully");
       navigate(`/maintenances/${id}`);
