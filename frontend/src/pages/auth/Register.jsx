@@ -108,7 +108,6 @@ const Register = () => {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="phoneNumber"
@@ -130,7 +129,6 @@ const Register = () => {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="email"
@@ -152,7 +150,6 @@ const Register = () => {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="password"
@@ -174,7 +171,6 @@ const Register = () => {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="nationalId"
@@ -195,8 +191,7 @@ const Register = () => {
                       {errors.nationalId.message}
                     </p>
                   )}
-                </div>
-
+                </div>{" "}
                 <div>
                   <label
                     htmlFor="licenseNumber"
@@ -218,7 +213,6 @@ const Register = () => {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="licenseType"
@@ -234,9 +228,9 @@ const Register = () => {
                   >
                     <option value="">Select license type</option>
                     <option value="B">B - Light vehicles</option>
-                    <option value="C">C - Medium trucks</option>
+                    <option value="C">C - Trucks</option>
                     <option value="D">D - Buses</option>
-                    <option value="EC">EC - Heavy trucks with trailer</option>
+                    <option value="EC">EC - Heavy trucks with trailers</option>
                   </select>
                   {errors.licenseType && (
                     <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -244,7 +238,6 @@ const Register = () => {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="dateOfBirth"
@@ -266,7 +259,6 @@ const Register = () => {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="address"
