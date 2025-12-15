@@ -81,7 +81,6 @@ const UserList = () => {
       showError(error.response?.data?.message || "Failed to approve user");
     }
   };
-
   const handleReject = async (id, name) => {
     if (!window.confirm(`Reject user ${name}?`)) return;
     try {
@@ -91,6 +90,27 @@ const UserList = () => {
       fetchPendingUsers();
     } catch (error) {
       showError(error.response?.data?.message || "Failed to reject user");
+    }
+  };
+
+  const handleChangeStatus = async (id, name, newStatus) => {
+    const statusMessages = {
+      approved: "Approve",
+      pending: "Set as pending",
+      rejected: "Reject",
+    };
+
+    if (!window.confirm(`${statusMessages[newStatus]} user ${name}?`)) return;
+
+    try {
+      await userService.approve(id, newStatus);
+      showSuccess(`User status updated to ${newStatus}`);
+      fetchUsers();
+      fetchPendingUsers();
+    } catch (error) {
+      showError(
+        error.response?.data?.message || "Failed to update user status"
+      );
     }
   };
 
@@ -259,7 +279,7 @@ const UserList = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(user.accountStatus)}
-                      </td>
+                      </td>{" "}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center gap-3">
                           <Link
@@ -269,6 +289,86 @@ const UserList = () => {
                             <Eye className="w-4 h-4" />
                             View
                           </Link>
+
+                          {/* Status Change Buttons */}
+                          {user.accountStatus === "approved" && (
+                            <button
+                              onClick={() =>
+                                handleChangeStatus(
+                                  user._id,
+                                  user.name,
+                                  "pending"
+                                )
+                              }
+                              className="inline-flex items-center gap-1.5 text-yellow-600 dark:text-yellow-400 hover:text-yellow-900 dark:hover:text-yellow-300"
+                            >
+                              <Clock className="w-4 h-4" />
+                              Set Pending
+                            </button>
+                          )}
+
+                          {user.accountStatus === "pending" && (
+                            <>
+                              <button
+                                onClick={() =>
+                                  handleChangeStatus(
+                                    user._id,
+                                    user.name,
+                                    "approved"
+                                  )
+                                }
+                                className="inline-flex items-center gap-1.5 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300"
+                              >
+                                <Check className="w-4 h-4" />
+                                Approve
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleChangeStatus(
+                                    user._id,
+                                    user.name,
+                                    "rejected"
+                                  )
+                                }
+                                className="inline-flex items-center gap-1.5 text-orange-600 dark:text-orange-400 hover:text-orange-900 dark:hover:text-orange-300"
+                              >
+                                <X className="w-4 h-4" />
+                                Reject
+                              </button>
+                            </>
+                          )}
+
+                          {user.accountStatus === "rejected" && (
+                            <>
+                              <button
+                                onClick={() =>
+                                  handleChangeStatus(
+                                    user._id,
+                                    user.name,
+                                    "approved"
+                                  )
+                                }
+                                className="inline-flex items-center gap-1.5 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300"
+                              >
+                                <Check className="w-4 h-4" />
+                                Approve
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleChangeStatus(
+                                    user._id,
+                                    user.name,
+                                    "pending"
+                                  )
+                                }
+                                className="inline-flex items-center gap-1.5 text-yellow-600 dark:text-yellow-400 hover:text-yellow-900 dark:hover:text-yellow-300"
+                              >
+                                <Clock className="w-4 h-4" />
+                                Set Pending
+                              </button>
+                            </>
+                          )}
+
                           <button
                             onClick={() => handleDelete(user._id, user.name)}
                             className="inline-flex items-center gap-1.5 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
