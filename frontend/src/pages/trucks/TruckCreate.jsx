@@ -90,7 +90,6 @@ const TruckCreate = () => {
               Uppercase alphanumeric with hyphens only
             </p>
           </div>
-
           <div>
             <label
               htmlFor="brand"
@@ -112,7 +111,6 @@ const TruckCreate = () => {
               </p>
             )}
           </div>
-
           <div>
             <label
               htmlFor="model"
@@ -134,7 +132,6 @@ const TruckCreate = () => {
               </p>
             )}
           </div>
-
           <div>
             <label
               htmlFor="yearOfManufacture"
@@ -155,8 +152,7 @@ const TruckCreate = () => {
                 {errors.yearOfManufacture.message}
               </p>
             )}
-          </div>
-
+          </div>{" "}
           <div>
             <label
               htmlFor="fuelType"
@@ -172,9 +168,8 @@ const TruckCreate = () => {
             >
               <option value="">Select fuel type</option>
               <option value="Diesel">Diesel</option>
-              <option value="Essence">Essence</option>
-              <option value="Électrique">Électrique</option>
-              <option value="Hybride">Hybride</option>
+              <option value="Gasoline">Gasoline</option>
+              <option value="Other">Other</option>
             </select>
             {errors.fuelType && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -182,7 +177,6 @@ const TruckCreate = () => {
               </p>
             )}
           </div>
-
           <div>
             <label
               htmlFor="status"
@@ -206,7 +200,6 @@ const TruckCreate = () => {
               </p>
             )}
           </div>
-
           <div>
             <label
               htmlFor="currentMileage"

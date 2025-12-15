@@ -57,17 +57,37 @@ const FuelCreate = () => {
       (parseFloat(quantity) || 0) * (parseFloat(pricePerLitre) || 0);
     setValue("totalCost", parseFloat(total.toFixed(2)));
   }, [quantity, pricePerLitre, setValue]);
-
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [trucksData, trailersData, driversData, tripsData] =
-          await Promise.all([
-            truckService.getAll(),
-            trailerService.getAll(),
-            userService.getAll(),
-            tripService.getAll(),
-          ]);
+        const [
+          trucksResponse,
+          trailersResponse,
+          driversResponse,
+          tripsResponse,
+        ] = await Promise.all([
+          truckService.getAll(),
+          trailerService.getAll(),
+          userService.getAll(),
+          tripService.getAll(),
+        ]);
+
+        // Safely extract array from response
+        const extractArray = (response, keys = []) => {
+          if (Array.isArray(response)) return response;
+          for (const key of keys) {
+            if (response && Array.isArray(response[key])) return response[key];
+          }
+          return [];
+        };
+
+        const trucksData = extractArray(trucksResponse, ["trucks", "data"]);
+        const trailersData = extractArray(trailersResponse, [
+          "trailers",
+          "data",
+        ]);
+        const usersData = extractArray(driversResponse, ["users", "data"]);
+        const tripsData = extractArray(tripsResponse, ["trips", "data"]);
 
         const allVehicles = [
           ...trucksData.map((t) => ({
@@ -83,10 +103,18 @@ const FuelCreate = () => {
         ];
 
         setVehicles(allVehicles);
-        setDrivers(driversData.filter((u) => u.role === "chauffeur"));
+        setDrivers(usersData.filter((u) => u.role === "chauffeur"));
         setTrips(tripsData);
+        console.log("Loaded form data:", {
+          vehicles: allVehicles.length,
+          drivers: usersData.filter((u) => u.role === "chauffeur").length,
+          trips: tripsData.length,
+        });
       } catch (error) {
-        toast.error("Failed to load form data");
+        console.error("Error loading form data:", error);
+        toast.error(
+          "Failed to load form data. Please ensure the backend is running."
+        );
       } finally {
         setLoading(false);
       }

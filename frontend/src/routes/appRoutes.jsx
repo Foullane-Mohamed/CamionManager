@@ -2,55 +2,45 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Layout from "../components/layout/Layout";
 
-// Auth pages
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import PendingApproval from "../pages/auth/PendingApproval";
 
-// Dashboard
 import Dashboard from "../pages/dashboard/Dashboard";
 
-// Truck pages
 import TruckList from "../pages/trucks/TruckList";
 import TruckCreate from "../pages/trucks/TruckCreate";
 import TruckEdit from "../pages/trucks/TruckEdit";
 import TruckView from "../pages/trucks/TruckView";
 
-// Trailer pages
 import TrailerList from "../pages/trailers/TrailerList";
 import TrailerCreate from "../pages/trailers/TrailerCreate";
 import TrailerEdit from "../pages/trailers/TrailerEdit";
 import TrailerView from "../pages/trailers/TrailerView";
 
-// Trip pages
 import TripList from "../pages/trips/TripList";
 import TripCreate from "../pages/trips/TripCreate";
 import TripEdit from "../pages/trips/TripEdit";
 import TripView from "../pages/trips/TripView";
 
-// Fuel pages
 import FuelList from "../pages/fuels/FuelList";
 import FuelCreate from "../pages/fuels/FuelCreate";
-// import FuelEdit from "../pages/fuels/FuelEdit";
+import FuelEdit from "../pages/fuels/FuelEdit";
 import FuelView from "../pages/fuels/FuelView";
 
-// Maintenance pages
 import MaintenanceList from "../pages/maintenances/MaintenanceList";
 import MaintenanceCreate from "../pages/maintenances/MaintenanceCreate";
 import MaintenanceEdit from "../pages/maintenances/MaintenanceEdit";
 import MaintenanceView from "../pages/maintenances/MaintenanceView";
 
-// Tire pages
 import TireList from "../pages/tires/TireList";
 import TireCreate from "../pages/tires/TireCreate";
 import TireEdit from "../pages/tires/TireEdit";
 import TireView from "../pages/tires/TireView";
 
-// User pages
 import UserList from "../pages/users/UserList";
 import UserView from "../pages/users/UserView";
 
-// Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, loading, userRole } = useAuth();
 
@@ -160,14 +150,14 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-          {/* <Route
+           <Route
             path="fuels/:id/edit"
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <FuelEdit />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route path="fuels/:id" element={<FuelView />} />
           {/* Maintenances */}
           <Route path="maintenances" element={<MaintenanceList />} />

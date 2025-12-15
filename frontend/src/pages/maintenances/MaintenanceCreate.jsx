@@ -41,22 +41,36 @@ const MaintenanceCreate = () => {
       performedBy: user?._id || "",
     },
   });
-
   useEffect(() => {
     const loadVehicles = async () => {
       try {
-        const [trucks, trailers] = await Promise.all([
+        const [trucksResponse, trailersResponse] = await Promise.all([
           truckService.getAll(),
           trailerService.getAll(),
         ]);
 
+        // Safely extract array from response
+        const extractArray = (response, keys = []) => {
+          if (Array.isArray(response)) return response;
+          for (const key of keys) {
+            if (response && Array.isArray(response[key])) return response[key];
+          }
+          return [];
+        };
+
+        const trucksData = extractArray(trucksResponse, ["trucks", "data"]);
+        const trailersData = extractArray(trailersResponse, [
+          "trailers",
+          "data",
+        ]);
+
         const allVehicles = [
-          ...trucks.map((t) => ({
+          ...trucksData.map((t) => ({
             ...t,
             type: "Truck",
             label: `${t.matricule} (Truck)`,
           })),
-          ...trailers.map((t) => ({
+          ...trailersData.map((t) => ({
             ...t,
             type: "Trailer",
             label: `${t.matricule} (Trailer)`,
@@ -64,8 +78,12 @@ const MaintenanceCreate = () => {
         ];
 
         setVehicles(allVehicles);
+        console.log("Loaded vehicles:", allVehicles);
       } catch (error) {
-        toast.error("Failed to load vehicles");
+        console.error("Error loading vehicles:", error);
+        toast.error(
+          "Failed to load vehicles. Please ensure the backend is running."
+        );
       } finally {
         setLoading(false);
       }
