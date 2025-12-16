@@ -1,9 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import swaggerUi from "swagger-ui-express";
 import connectDB from "./config/db.js";
-import swaggerSpec from "./config/swagger.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import truckRoutes from "./routes/truckRoutes.js";
@@ -14,7 +12,7 @@ import tripRoutes from "./routes/tripRoutes.js";
 import maintenanceRoutes from "./routes/maintenanceRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
-dotenv.config();
+dotenv.config(); 
 
 connectDB();
 
@@ -25,16 +23,6 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-  })
-);
-
-// Swagger API Documentation
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "Fleet Management API Docs",
   })
 );
 
@@ -51,7 +39,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Server is running" });
 });
 
-// Error handling middleware (must be after routes)
+
 app.use(notFound);
 app.use(errorHandler);
 
