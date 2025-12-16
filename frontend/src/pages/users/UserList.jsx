@@ -56,11 +56,8 @@ const UserList = () => {
         usersArray = data.users;
       } else if (data && Array.isArray(data.data)) {
         usersArray = data.data;
-      }
-
-      setPendingUsers(usersArray);
+      }      setPendingUsers(usersArray);
     } catch {
-      console.error("Failed to fetch pending users");
       setPendingUsers([]);
     }
   }, []);

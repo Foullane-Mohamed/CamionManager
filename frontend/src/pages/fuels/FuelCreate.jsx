@@ -47,11 +47,9 @@ const FuelCreate = () => {
       totalCost: 0,
     },
   });
-
   const quantity = watch("quantity");
   const pricePerLitre = watch("pricePerLitre");
 
-  // Auto-calculate total cost
   useEffect(() => {
     const total =
       (parseFloat(quantity) || 0) * (parseFloat(pricePerLitre) || 0);
@@ -69,10 +67,8 @@ const FuelCreate = () => {
           truckService.getAll(),
           trailerService.getAll(),
           userService.getAll(),
-          tripService.getAll(),
-        ]);
+          tripService.getAll(),        ]);
 
-        // Safely extract array from response
         const extractArray = (response, keys = []) => {
           if (Array.isArray(response)) return response;
           for (const key of keys) {
@@ -100,15 +96,12 @@ const FuelCreate = () => {
             type: "Trailer",
             label: `${t.matricule} (Trailer)`,
           })),
-        ];
-        setVehicles(allVehicles);
+        ];        setVehicles(allVehicles);
         setDrivers(driversData.filter((u) => u.role === "chauffeur"));
-        setTrips(tripsData);
-      } catch (error) {
+        setTrips(tripsData);      } catch {
         toast.error(
           "Failed to load form data. Please ensure the backend is running."
         );
-        // Ensure arrays are always set, even on error
         setVehicles([]);
         setDrivers([]);
         setTrips([]);

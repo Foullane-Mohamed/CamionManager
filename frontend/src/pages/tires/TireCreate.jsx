@@ -6,7 +6,7 @@ import { truckService } from "../../services/truck.service";
 import { trailerService } from "../../services/trailer.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Circle,
   Save,
@@ -35,38 +35,33 @@ const TireCreate = () => {
       associatedVehicleType: "Truck",
     },
   });
-
   const vehicleType = watch("associatedVehicleType");
 
-  useEffect(() => {
-    loadVehicles();
-  }, [vehicleType]);
-
-  const loadVehicles = async () => {
-    try {
-      setLoading(true);
+  const loadVehicles = useCallback(async () => {
+    try {      setLoading(true);
       if (vehicleType === "Truck") {
         const trucksResponse = await truckService.getAll();
-        // Extract array from response object
         const trucksData = Array.isArray(trucksResponse)
           ? trucksResponse
           : (trucksResponse?.trucks || []);
         setVehicles(trucksData.map(t => ({ id: t._id, label: t.matricule })));
       } else {
         const trailersResponse = await trailerService.getAll();
-        // Extract array from response object
         const trailersData = Array.isArray(trailersResponse)
           ? trailersResponse
-          : (trailersResponse?.trailers || []);
-        setVehicles(trailersData.map(t => ({ id: t._id, label: t.matricule })));
+          : (trailersResponse?.trailers || []);        setVehicles(trailersData.map(t => ({ id: t._id, label: t.matricule })));
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to load vehicles");
       setVehicles([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [vehicleType]);
+
+  useEffect(() => {
+    loadVehicles();
+  }, [loadVehicles]);
 
   const onSubmit = async (data) => {
     try {

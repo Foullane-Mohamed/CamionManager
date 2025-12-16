@@ -85,13 +85,9 @@ export const AuthProvider = ({ children }) => {
       toast.error(errorMessage);
       throw error;
     }
-  };
-
-  const logout = async () => {
+  };  const logout = async () => {
     try {
       await authService.logout();
-    } catch (error) {
-      console.error("Logout error:", error);
     } finally {
       setToken(null);
       setUser(null);
@@ -100,14 +96,12 @@ export const AuthProvider = ({ children }) => {
       toast.info("Logged out successfully");
     }
   };
-
   const refreshUser = async () => {
-    try {
-      const profile = await authService.getProfile();
+    try {      const profile = await authService.getProfile();
       setUser(profile);
       localStorage.setItem("user", JSON.stringify(profile));
-    } catch (error) {
-      console.error("Failed to refresh user:", error);
+    } catch {
+      return;
     }
   };
 

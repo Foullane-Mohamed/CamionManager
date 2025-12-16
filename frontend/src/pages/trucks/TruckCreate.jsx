@@ -164,17 +164,15 @@ const TruckCreate = () => {
             >
               <Fuel className="w-4 h-4" />
               Fuel Type *
-            </label>
-            <select
+            </label>            <select
               id="fuelType"
               {...register("fuelType")}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
             >
               <option value="">Select fuel type</option>
               <option value="Diesel">Diesel</option>
-              <option value="Essence">Essence</option>
-              <option value="Électrique">Électrique</option>
-              <option value="Hybride">Hybride</option>
+              <option value="Gasoline">Gasoline</option>
+              <option value="Other">Other</option>
             </select>
             {errors.fuelType && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">

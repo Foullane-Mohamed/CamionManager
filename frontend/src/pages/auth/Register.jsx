@@ -50,13 +50,11 @@ const Register = () => {
       if (response?.accountStatus === "pending") {
         navigate("/pending-approval");
         return;
-      }
-
-      if (response?.success) {
+      }      if (response?.success) {
         navigate("/dashboard");
       }
-    } catch (error) {
-      console.error("Registration error:", error);
+    } catch {
+      return;
     }
   };
 

@@ -37,11 +37,9 @@ const TripCreate = () => {
       setLoading(true);
       const [trucksResponse, trailersResponse, usersResponse] = await Promise.all([
         truckService.getAll(),
-        trailerService.getAll(),
-        userService.getAll(),
+        trailerService.getAll(),        userService.getAll(),
       ]);
       
-      // Extract arrays from response objects, with fallback to empty arrays
       const trucksData = Array.isArray(trucksResponse) 
         ? trucksResponse 
         : (trucksResponse?.trucks || []);
@@ -57,7 +55,6 @@ const TripCreate = () => {
       setDrivers(usersData.filter(u => u.role === "chauffeur" && u.accountStatus === "approved"));
     } catch (error) {
       toast.error("Failed to load data");
-      // Ensure arrays are always set, even on error
       setTrucks([]);
       setTrailers([]);
       setDrivers([]);
@@ -98,19 +95,21 @@ const TripCreate = () => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-800">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">          <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <Truck className="w-4 h-4" />
               Truck *
             </label>
             <select
               {...register("assignedTruck")}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              style={{
+                colorScheme: 'dark'
+              }}
             >
-              <option value="">Select truck</option>
+              <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Select truck</option>
               {trucks.map(t => (
-                <option key={t._id} value={t._id}>{t.matricule}</option>
+                <option key={t._id} value={t._id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{t.matricule}</option>
               ))}
             </select>
             {errors.assignedTruck && <p className="mt-2 text-sm text-red-600">{errors.assignedTruck.message}</p>}
@@ -123,27 +122,31 @@ const TripCreate = () => {
             </label>
             <select
               {...register("assignedTrailer")}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              style={{
+                colorScheme: 'dark'
+              }}
             >
-              <option value="">No trailer</option>
+              <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">No trailer</option>
               {trailers.map(t => (
-                <option key={t._id} value={t._id}>{t.matricule}</option>
+                <option key={t._id} value={t._id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{t.matricule}</option>
               ))}
             </select>
-          </div>
-
-          <div>
+          </div><div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <User className="w-4 h-4" />
               Driver *
             </label>
             <select
               {...register("assignedDriver")}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              style={{
+                colorScheme: 'dark'
+              }}
             >
-              <option value="">Select driver</option>
+              <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Select driver</option>
               {drivers.map(d => (
-                <option key={d._id} value={d._id}>{d.firstName} {d.lastName}</option>
+                <option key={d._id} value={d._id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{d.firstName} {d.lastName}</option>
               ))}
             </select>
             {errors.assignedDriver && <p className="mt-2 text-sm text-red-600">{errors.assignedDriver.message}</p>}

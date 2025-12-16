@@ -4,7 +4,6 @@ import { maintenanceSchema } from "../../validation/maintenance.schema";
 import { maintenanceService } from "../../services/maintenance.service";
 import { truckService } from "../../services/truck.service";
 import { trailerService } from "../../services/trailer.service";
-import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
@@ -23,7 +22,6 @@ import {
 } from "lucide-react";
 
 const MaintenanceCreate = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,10 +41,8 @@ const MaintenanceCreate = () => {
       cost: 0,
     },
   });
-
   const selectedVehicleId = watch("linkedVehicle");
 
-  // Auto-fill vehicle mileage when vehicle is selected
   useEffect(() => {
     if (selectedVehicleId && vehicles.length > 0) {
       const selectedVehicle = vehicles.find(v => v._id === selectedVehicleId);
@@ -59,11 +55,9 @@ const MaintenanceCreate = () => {
     const loadVehicles = async () => {
       try {
         const [trucksResponse, trailersResponse] = await Promise.all([
-          truckService.getAll(),
-          trailerService.getAll(),
+          truckService.getAll(),          trailerService.getAll(),
         ]);
 
-        // Handle different response formats
         let trucks = [];
         let trailers = [];
 
@@ -96,14 +90,9 @@ const MaintenanceCreate = () => {
             ...t,
             type: "Trailer",
             label: `${t.matricule} (Trailer)`,
-          })),
-        ];
-
-        setVehicles(allVehicles);
-      } catch (error) {
-        console.error("Error loading vehicles:", error);
+          })),        ];        setVehicles(allVehicles);
+      } catch {
         toast.error("Failed to load vehicles");
-        // Ensure array is always set, even on error
         setVehicles([]);
       } finally {
         setLoading(false);
