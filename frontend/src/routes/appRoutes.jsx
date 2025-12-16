@@ -1,7 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Layout from "../components/layout/Layout";
-
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import PendingApproval from "../pages/auth/PendingApproval";
@@ -57,14 +62,13 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // If the user is a chauffeur, restrict access to only the trips section
   if (userRole === "chauffeur") {
     const path = location.pathname || "";
-    // Allow only routes that start with /trips
+
     if (!path.startsWith("/trips")) {
       return <Navigate to="/trips" replace />;
     }
-    // Also block access if allowedRoles is provided and doesn't include chauffeur
+
     if (allowedRoles && !allowedRoles.includes(userRole)) {
       return <Navigate to="/trips" replace />;
     }
@@ -79,11 +83,14 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>      {" "}
+    <BrowserRouter>
+      {" "}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
         <Route path="/pending-approval" element={<PendingApproval />} />
+
         <Route
           path="/"
           element={
@@ -91,7 +98,9 @@ const AppRoutes = () => {
               <Layout />
             </ProtectedRoute>
           }
-        >          <Route index element={<Navigate to="/dashboard" replace />} />
+        >
+          {" "}
+          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="trucks" element={<TruckList />} />
           <Route
@@ -109,7 +118,8 @@ const AppRoutes = () => {
                 <TruckEdit />
               </ProtectedRoute>
             }
-          />          <Route path="trucks/:id/view" element={<TruckView />} />
+          />{" "}
+          <Route path="trucks/:id/view" element={<TruckView />} />
           <Route path="trailers" element={<TrailerList />} />
           <Route
             path="trailers/create"
@@ -126,7 +136,8 @@ const AppRoutes = () => {
                 <TrailerEdit />
               </ProtectedRoute>
             }
-          />          <Route path="trailers/:id/view" element={<TrailerView />} />
+          />{" "}
+          <Route path="trailers/:id/view" element={<TrailerView />} />
           <Route path="trips" element={<TripList />} />
           <Route
             path="trips/create"
@@ -142,7 +153,8 @@ const AppRoutes = () => {
               <ProtectedRoute allowedRoles={["admin"]}>
                 <TripEdit />
               </ProtectedRoute>
-            }          />
+            }
+          />
           <Route path="trips/:id" element={<TripView />} />
           <Route path="fuels" element={<FuelList />} />
           <Route
@@ -159,7 +171,8 @@ const AppRoutes = () => {
               <ProtectedRoute allowedRoles={["admin"]}>
                 <FuelEdit />
               </ProtectedRoute>
-            }          />
+            }
+          />
           <Route path="fuels/:id" element={<FuelView />} />
           <Route path="maintenances" element={<MaintenanceList />} />
           <Route
@@ -176,7 +189,8 @@ const AppRoutes = () => {
               <ProtectedRoute allowedRoles={["admin"]}>
                 <MaintenanceEdit />
               </ProtectedRoute>
-            }          />
+            }
+          />
           <Route path="maintenances/:id/view" element={<MaintenanceView />} />
           <Route path="tires" element={<TireList />} />
           <Route
@@ -193,7 +207,8 @@ const AppRoutes = () => {
               <ProtectedRoute allowedRoles={["admin"]}>
                 <TireEdit />
               </ProtectedRoute>
-            }          />
+            }
+          />
           <Route path="tires/:id" element={<TireView />} />
           <Route
             path="users"
@@ -212,7 +227,6 @@ const AppRoutes = () => {
             }
           />
         </Route>
-        {/* Catch all */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>

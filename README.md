@@ -54,13 +54,10 @@ Aujourd’hui, la gestion de cette flotte est réalisée de manière essentielle
 
 ---
 
-## Partie Déploiement
-- Création d’images Docker pour le Back-end et le Front-end.
-- Mise en place d’un réseau Docker pour connecter les deux services.
 
 ---
 
-## Lancer le projet
+## Comment lancer le projet
 
 ### Prérequis
 - Node.js >= 18
@@ -71,3 +68,11 @@ Aujourd’hui, la gestion de cette flotte est réalisée de manière essentielle
 1. Se placer dans le dossier `backend` :  
    ```bash
    cd backend
+### Installer les dépendances
+npm install
+### Créer un fichier .env avec la configuration suivante
+PORT=5000
+MONGO_URI=<votre_uri_mongodb>
+JWT_SECRET=<votre_cle_jwt>
+### Lancer le serveur
+npm run div

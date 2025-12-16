@@ -67,7 +67,8 @@ const FuelCreate = () => {
           truckService.getAll(),
           trailerService.getAll(),
           userService.getAll(),
-          tripService.getAll(),        ]);
+          tripService.getAll(),
+        ]);
 
         const extractArray = (response, keys = []) => {
           if (Array.isArray(response)) return response;
@@ -96,9 +97,11 @@ const FuelCreate = () => {
             type: "Trailer",
             label: `${t.matricule} (Trailer)`,
           })),
-        ];        setVehicles(allVehicles);
+        ];
+        setVehicles(allVehicles);
         setDrivers(driversData.filter((u) => u.role === "chauffeur"));
-        setTrips(tripsData);      } catch {
+        setTrips(tripsData);
+      } catch {
         toast.error(
           "Failed to load form data. Please ensure the backend is running."
         );

@@ -59,13 +59,4 @@ export const chauffeurOnly = (req, res, next) => {
   }
 };
 
-export const adminOrSelf = (req, res, next) => {
-  if (
-    req.user &&
-    (req.user.role === "admin" || req.user._id.toString() === req.params.id)
-  ) {
-    next();
-  } else {
-    res.status(403).json({ message: "Access denied." });
-  }
-};
+

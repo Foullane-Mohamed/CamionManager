@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
-import { Menu, User, LogOut, Settings, Sun, Moon, Truck } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 
 const Header = ({ toggleSidebar }) => {
   const { user, logout, userRole } = useAuth();
-  useTheme(); // Keep context subscription for theme reactivity
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
 

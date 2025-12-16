@@ -1,6 +1,5 @@
 import Joi from "joi";
 
-// Validation for creating a maintenance rule (admin only)
 export const createMaintenanceRuleValidator = (data) => {
   const schema = Joi.object({
     maintenanceType: Joi.string()
@@ -64,7 +63,6 @@ export const updateMaintenanceRuleValidator = (data) => {
   return schema.validate(data);
 };
 
-// Validation for creating a maintenance record
 export const createMaintenanceValidator = (data) => {
   const schema = Joi.object({
     maintenanceType: Joi.string()
