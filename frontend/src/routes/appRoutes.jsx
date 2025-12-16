@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Layout from "../components/layout/Layout";
 
@@ -43,6 +43,7 @@ import UserView from "../pages/users/UserView";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, loading, userRole } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -53,7 +54,20 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  // If the user is a chauffeur, restrict access to only the trips section
+  if (userRole === "chauffeur") {
+    const path = location.pathname || "";
+    // Allow only routes that start with /trips
+    if (!path.startsWith("/trips")) {
+      return <Navigate to="/trips" replace />;
+    }
+    // Also block access if allowedRoles is provided and doesn't include chauffeur
+    if (allowedRoles && !allowedRoles.includes(userRole)) {
+      return <Navigate to="/trips" replace />;
+    }
   }
 
   if (allowedRoles && !allowedRoles.includes(userRole)) {

@@ -23,12 +23,17 @@ const TripList = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const { showSuccess, showError } = useApp();
-  const { userRole } = useAuth();
+  const { userRole, user } = useAuth();
 
   const fetchTrips = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await tripService.getAll();
+      // If user is a chauffeur, only fetch trips assigned to them
+      const filters = {};
+      if (userRole === "chauffeur" && user?._id) {
+        filters.assignedDriver = user._id;
+      }
+      const data = await tripService.getAll(filters);
 
       let tripsArray = [];
       if (Array.isArray(data)) {
@@ -46,7 +51,7 @@ const TripList = () => {
     } finally {
       setLoading(false);
     }
-  }, [showError]);
+  }, [showError, userRole, user]);
 
   useEffect(() => {
     fetchTrips();

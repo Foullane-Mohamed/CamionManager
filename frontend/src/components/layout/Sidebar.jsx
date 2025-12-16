@@ -30,11 +30,6 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
   const chauffeurNavigation = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "My Trips", path: "/trips", icon: Route },
-    { name: "Trucks", path: "/trucks", icon: Truck },
-    { name: "Trailers", path: "/trailers", icon: Container },
-    { name: "Fuel Records", path: "/fuels", icon: Fuel },
-    { name: "Maintenance", path: "/maintenances", icon: Wrench },
-    { name: "Tires", path: "/tires", icon: CircleDot },
   ];
 
   const navigation =
@@ -85,11 +80,11 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                     `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                       isActive
                         ? "bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 text-blue-700 dark:text-blue-300 shadow-sm border-l-4 border-blue-600 dark:border-blue-400"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 border-l-4 border-transparent"
+                        : "text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 border-l-4 border-transparent"
                     }`
                   }
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5 text-current" />
                   <span>{item.name}</span>
                 </NavLink>
               );

@@ -24,6 +24,8 @@ const Register = () => {
   const {
     register,
     handleSubmit,
+    setValue,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(registerSchema),
@@ -35,14 +37,30 @@ const Register = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  const isValidDateDDMMYYYY = (value) => {
+    if (!/^(\d{2})\/(\d{2})\/(\d{4})$/.test(value)) return false;
+    const [dayStr, monthStr, yearStr] = value.split("/");
+    const day = parseInt(dayStr, 10);
+    const month = parseInt(monthStr, 10);
+    const year = parseInt(yearStr, 10);
+    if (month < 1 || month > 12) return false;
+    const maxDays = new Date(year, month, 0).getDate();
+    if (day < 1 || day > maxDays) return false;
+    return true;
+  };
+
   const onSubmit = async (data) => {
     try {
       if (data.dateOfBirth) {
+        // ensure DD/MM/YYYY format and valid date
+        if (!isValidDateDDMMYYYY(data.dateOfBirth)) {
+          setError("dateOfBirth", { type: "manual", message: "Invalid date. Use DD/MM/YYYY." });
+          return;
+        }
+
+        // normalize to YYYY-MM-DD for backend
         const [day, month, year] = data.dateOfBirth.split("/");
-        data.dateOfBirth = `${year}-${month.padStart(2, "0")}-${day.padStart(
-          2,
-          "0"
-        )}`;
+        data.dateOfBirth = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       }
 
       const response = await registerUser(data);
@@ -50,7 +68,8 @@ const Register = () => {
       if (response?.accountStatus === "pending") {
         navigate("/pending-approval");
         return;
-      }      if (response?.success) {
+      }      
+      if (response?.success) {
         navigate("/dashboard");
       }
     } catch {
@@ -255,7 +274,26 @@ const Register = () => {
                     id="dateOfBirth"
                     type="text"
                     placeholder="DD/MM/YYYY"
-                    {...register("dateOfBirth")}
+                    {...register("dateOfBirth", {
+                      onChange: (e) => {
+                        // format to DD/MM/YYYY while typing
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 8);
+                        let formatted = digits;
+                        if (digits.length >= 5) {
+                          formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+                        } else if (digits.length >= 3) {
+                          formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+                        }
+                        e.target.value = formatted;
+                        setValue("dateOfBirth", formatted, { shouldValidate: true, shouldDirty: true });
+                      },
+                      onBlur: (e) => {
+                        const val = e.target.value;
+                        if (val && !isValidDateDDMMYYYY(val)) {
+                          setError("dateOfBirth", { type: "manual", message: "Invalid date. Use DD/MM/YYYY." });
+                        }
+                      },
+                    })}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
                   />
                   {errors.dateOfBirth && (

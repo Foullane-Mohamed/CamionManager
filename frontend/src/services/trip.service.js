@@ -1,8 +1,8 @@
 import axiosInstance from "../api/axiosInstance";
 
 export const tripService = {
-  getAll: async () => {
-    const response = await axiosInstance.get("/trips");
+  getAll: async (filters = {}) => {
+    const response = await axiosInstance.get("/trips", { params: filters });
     return response.data;
   },
 
